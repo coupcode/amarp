@@ -1,6 +1,6 @@
 import 'package:amarp/constants.dart';
 import 'package:amarp/screens/camera.dart';
-import 'package:amarp/widgets/goback_btn.dart';
+import 'package:amarp/screens/locations.dart';
 import 'package:amarp/widgets/shimmer_results_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -163,13 +163,16 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                                           borderRadius: BorderRadius.only(
                                               topLeft: Radius.circular(15),
                                               topRight: Radius.circular(15))),
-                                      height: 110,
+                                      height: 120,
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Column(children: [
                                           TextButton(onPressed: (){
                                             Get.to(()=> CameraScreen());
-                                          }, child: Text("Open Camera"))
+                                          }, child: Text("Open Camera")),
+                                          TextButton(onPressed: (){
+                                            Get.to(()=> LocationsPage());
+                                          }, child: Text("Locations Page"))
                                         ]),
                                       ),
                                     ));
