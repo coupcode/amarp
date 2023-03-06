@@ -20,6 +20,7 @@ dependencies:
   shimmer: ^2.0.0
   geolocator: ^8.2.0
   geocoding: ^2.0.4
+  flutter_compass: ^0.7.0
 
 dev_dependencies:
   flutter_test:

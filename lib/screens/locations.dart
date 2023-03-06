@@ -34,7 +34,7 @@ class _LocationsPageState extends State<LocationsPage> {
   }
 
   final LocationSettings locationSettings = LocationSettings(
-    accuracy: LocationAccuracy.bestForNavigation,
+    accuracy: LocationAccuracy.best,
    distanceFilter: 10 // chanage in distance in meters before update
   );
 
@@ -121,6 +121,7 @@ void startListening(){
             children: [
               Text('LAT: ${_currentPosition?.latitude ?? ""}'),
               Text('LNG: ${_currentPosition?.longitude ?? ""}'),
+              Text('ALT: ${_currentPosition?.altitude ?? ""} metres'),
               Text('HEADING: ${_currentHeading}'),
               Text('ADDRESS: ${_currentAddress ?? ""}'),
               const SizedBox(height: 32),

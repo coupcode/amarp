@@ -1,5 +1,6 @@
 import 'package:amarp/constants.dart';
 import 'package:amarp/screens/camera.dart';
+import 'package:amarp/screens/compass.dart';
 import 'package:amarp/screens/locations.dart';
 import 'package:amarp/widgets/shimmer_results_list.dart';
 import 'package:flutter/material.dart';
@@ -163,7 +164,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                                           borderRadius: BorderRadius.only(
                                               topLeft: Radius.circular(15),
                                               topRight: Radius.circular(15))),
-                                      height: 120,
+                                      height: 160,
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Column(children: [
@@ -172,7 +173,10 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                                           }, child: Text("Open Camera")),
                                           TextButton(onPressed: (){
                                             Get.to(()=> LocationsPage());
-                                          }, child: Text("Locations Page"))
+                                          }, child: Text("Locations Page")),
+                                          TextButton(onPressed: (){
+                                            Get.to(()=> CompassPage());
+                                          }, child: Text("Compass Page")),
                                         ]),
                                       ),
                                     ));

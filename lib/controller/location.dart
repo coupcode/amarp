@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 class LocationFuncs{
   
   // Method for prompting the user to allow location 
-  static Future<bool> _handleLocationPermission(context) async {
+  static handleLocationPermission(context) async {
     bool serviceEnabled;
     LocationPermission permission;
     
@@ -35,7 +35,7 @@ class LocationFuncs{
 
   // Ask permission and get current position
   static getCurrentPosition(context) async {
-    final hasPermission = await _handleLocationPermission(context);
+    final hasPermission = await handleLocationPermission(context);
     if (!hasPermission) return;
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
         .then((Position position) {
