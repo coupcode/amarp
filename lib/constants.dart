@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+const baseUrl = "http://127.0.0.1:8000/";
 // Global methods
 deviceSize(context) {
   return MediaQuery.of(context).size;
@@ -35,10 +36,10 @@ class AppInputFieldDecorations {
       filled: true,
       fillColor: Color.fromARGB(255, 243, 243, 243),
       isDense: true,
-      errorStyle: TextStyle(fontSize: 9, fontWeight: FontWeight.w500),
+      errorStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
       contentPadding: EdgeInsets.all(12),
       border: OutlineInputBorder(
-          borderSide: BorderSide.none,
+          // borderSide: BorderSide.none,
           borderRadius: BorderRadius.all(Radius.circular(5))));
   
   static const decor2 = InputDecoration(

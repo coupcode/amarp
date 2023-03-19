@@ -1,6 +1,8 @@
+import 'package:amarp/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'dart:math' as math;
 
 class CompassPage extends StatefulWidget {
   const CompassPage({Key? key}) : super(key: key);
@@ -53,8 +55,24 @@ class _CompassPageState extends State<CompassPage> {
                   child: CameraPreview(_cameraController),
                 ),
                 Center(
-                  child: Text('Heading: $_heading'),
+                  child: Container(
+                    color: Colors.white,
+                    width: deviceSize(context).width*0.7,
+                    height: 30,
+                    child: Center(child: Text('Heading: $_heading', style: TextStyle(color:Colors.green, fontSize: 17),)),
+                  ),
                 ),
+                Align(
+                    alignment: Alignment.topCenter,
+                    child: Transform.rotate(
+                      angle: (_heading) * (math.pi / 180),
+                      child: const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.green,
+                        size: 200,
+                      ),
+                    ),
+                  )
               ],
             );
           } else {

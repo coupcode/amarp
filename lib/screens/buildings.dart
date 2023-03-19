@@ -2,7 +2,6 @@ import 'package:amarp/constants.dart';
 import 'package:amarp/screens/camera.dart';
 import 'package:amarp/screens/compass.dart';
 import 'package:amarp/screens/locations.dart';
-import 'package:amarp/widgets/shimmer_results_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -231,7 +230,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
         ),
       body: SafeArea(
             child: isLoading
-                ? const ShimmerResultList(count: 5)
+                ? const Center(child: CircularProgressIndicator())
                 : buildingList.isEmpty || (searchOpened && searchedBuildingList.isEmpty)
                     ? Center(
                         child: Text(

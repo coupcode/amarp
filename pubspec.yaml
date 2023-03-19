@@ -13,14 +13,13 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
-  shared_preferences: ^2.0.15
   get: ^4.6.5
-  flutter_easyloading: ^3.0.5
   camera: ^0.10.1
-  shimmer: ^2.0.0
   geolocator: ^8.2.0
   geocoding: ^2.0.4
   flutter_compass: ^0.7.0
+  share_plus: ^6.3.0
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:

@@ -3,7 +3,6 @@ import 'package:amarp/constants.dart';
 import 'package:amarp/screens/buildings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
 // Creating certificates for API connection
@@ -48,7 +47,6 @@ class _MyAppState extends State<MyApp> {
         primaryIconTheme: const IconThemeData(color: Colors.white),
 
       ),
-      builder: EasyLoading.init(),
       home: const BuildingsScreen(),
     );
   }
