@@ -62,6 +62,7 @@ class POSTClass{
           "Coordinate upload successful",
           snackPosition: SnackPosition.TOP
       ) ;
+        return 201;
       } else {
         Get.snackbar(
           'Failed',
@@ -70,7 +71,7 @@ class POSTClass{
           backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
-        
+        return 403;
       }
     }catch(e){
       Get.snackbar(
@@ -80,6 +81,7 @@ class POSTClass{
           backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
+      return 500;
     }
   }
 
@@ -99,6 +101,7 @@ class POSTClass{
           "Room upload successful",
           snackPosition: SnackPosition.TOP
       ) ;
+      return 201;
       } else {
         Get.snackbar(
           'Failed',
@@ -107,7 +110,7 @@ class POSTClass{
           backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
-        
+        return 403;
       }
     }catch(e){
       Get.snackbar(
@@ -117,6 +120,7 @@ class POSTClass{
           backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
+      return 500;
     }
   }
 

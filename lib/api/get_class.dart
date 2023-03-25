@@ -10,10 +10,9 @@ class GETClass{
   
   static getBuildings() async {
     try{
-      print("step 1");
     http.Response response =
         await http.get(Uri.parse("$baseUrl/buildings/"));
-    print("step 2");
+ 
     if (response.statusCode == 200) {
       return json.decode(response.body)["results"];
     } else {
@@ -49,5 +48,6 @@ class GETClass{
           snackPosition: SnackPosition.TOP
       ) ;
     }
+    return [];
   }
 }

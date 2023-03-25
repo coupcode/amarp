@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:ffi';
 
+import 'package:amarp/api/get_class.dart';
 import 'package:amarp/api/post_class.dart';
 import 'package:amarp/constants.dart';
 import 'package:amarp/widgets/goback_btn.dart';
@@ -10,13 +11,24 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocationsPage extends StatefulWidget {
-  const LocationsPage({Key? key}) : super(key: key);
-
+  LocationsPage({Key? key, required this.buildingsList}) : super(key: key);
+  List buildingsList;
   @override
   State<LocationsPage> createState() => _LocationsPageState();
 }
 
 class _LocationsPageState extends State<LocationsPage> {
+  List apiRoutesList = [];
+  getRoutesFunc()async{
+    setState(() {
+      isLoading = true;
+    });
+    List res = await GETClass.getRoutes();
+    setState(() {
+      apiRoutesList = res;
+      isLoading = false;
+    });
+  }
   // Controller vars
   bool isLoading = false;
   bool isSubmitBtnLoading = false;
@@ -370,7 +382,6 @@ void startListening(){
               AppPadding.verticalPadding,
               ElevatedButton(
                 onPressed: ()async{
-                  print("clicked");
                   setState(() {
                     isSubmitBtnLoading = true;
                   });
@@ -482,12 +493,47 @@ void startListening(){
         ),
       ),
         AppPadding.verticalPadding,
-        ElevatedButton(onPressed: (){
-          if (_routeFormKey.currentState!.validate()) {
-
-          }
-        }, 
-        child: Text("Submit"))
+        ElevatedButton(
+                onPressed: ()async{
+                  setState(() {
+                    isSubmitBtnLoading = true;
+                  });
+                  if (_roomsFormKey.currentState!.validate()) {
+                      Map<String, String> data = {
+                      "description": buildingDescription.text,
+                      "name": buildingName.text,
+                      "front_view_lat": front_view_lat.text,
+                      "front_view_long": front_view_long.text,
+                      "left_view_lat": left_view_lat.text,
+                      "left_view_long": left_view_long.text,
+                      "right_view_lat": right_view_lat.text,
+                      "right_view_long": right_view_long.text,
+                      "back_view_lat": back_view_lat.text,
+                      "back_view_long": back_view_long.text
+                    };
+                    int res = await POSTClass.createBuilding(data);
+                    if (res == 201){
+                      _roomsFormKey.currentState?.reset();
+                    }
+                    setState(() {
+                    isSubmitBtnLoading = false;
+                  });
+                  }
+                  
+                }, 
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(isSubmitBtnLoading ? "Uploading.." :"Submit"),
+                    AppPadding.horizontalPadding,
+                    isSubmitBtnLoading 
+                    ? const SizedBox(
+                      width: 15,
+                      height: 15,
+                      child:  CircularProgressIndicator(strokeWidth: 2,color: Colors.white, ))
+                    : const SizedBox()
+                  ],
+                ))
               
               ],
             ),
@@ -564,19 +610,19 @@ void startListening(){
                 size: 15, color: Colors.grey),
             underline: const SizedBox(),
             items: [
-              if (routeCategoryList.isEmpty)
+              if (apiRoutesList.isEmpty)
                 const DropdownMenuItem(
                     value: "",
                     child:
                         Text("No route category", style: AppBlackTextStyle.textpBlack)),
-              if (routeCategoryList.isNotEmpty)
+              if (apiRoutesList.isNotEmpty)
                 for (int index = 0;
-                    index < routeCategoryList.length;
+                    index < apiRoutesList.length;
                     index++)
                   DropdownMenuItem(
-                      value: routeCategoryList[index],
+                      value: apiRoutesList[index]["id"],
                       child: Text(
-                          routeCategoryList[index],
+                          apiRoutesList[index]["name"],
                           style: AppBlackTextStyle.textpBlack)),
             ],
             isExpanded: true,
@@ -592,12 +638,39 @@ void startListening(){
         ),
       ),
         AppPadding.verticalPadding,
-        ElevatedButton(onPressed: (){
+        ElevatedButton(onPressed: ()async{
           if (_coordinateFormKey.currentState!.validate()) {
-
+              setState(() {
+                isSubmitBtnLoading = true;
+              });
+              Map<String, String> data = {
+                  "name": coordinateName.text,
+                  "lat": coordinateLat.text,
+                  "lon": coordinateLon.text,
+                  "route": coordinateRouteID.text
+              };
+              int res = await POSTClass.createCoordinate(data);
+              if (res == 201){
+                _coordinateFormKey.currentState?.reset();
+              }
+              setState(() {
+                isSubmitBtnLoading = false;
+              });
           }
         }, 
-        child: Text("Submit"))
+        child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(isSubmitBtnLoading ? "Uploading.." :"Submit"),
+                    AppPadding.horizontalPadding,
+                    isSubmitBtnLoading 
+                    ? const SizedBox(
+                      width: 15,
+                      height: 15,
+                      child:  CircularProgressIndicator(strokeWidth: 2,color: Colors.white, ))
+                    : const SizedBox()
+                  ],
+                ))
               
               ],
             ),
@@ -683,25 +756,25 @@ void startListening(){
           padding: const EdgeInsets.all(5),
           child: DropdownButton(
             hint: Text(
-                coordinateRouteID.text == "" ? "Select" : coordinateRouteID.text,
+                roomBuildingID.text == "" ? "Select" : roomBuildingID.text,
                 style: AppBlackTextStyle.textpGrey),
             icon: const Icon(Icons.arrow_drop_down_outlined,
                 size: 15, color: Colors.grey),
             underline: const SizedBox(),
             items: [
-              if (routeCategoryList.isEmpty)
+              if (widget.buildingsList.isEmpty)
                 const DropdownMenuItem(
                     value: "",
                     child:
                         Text("No building", style: AppBlackTextStyle.textpBlack)),
-              if (routeCategoryList.isNotEmpty)
+              if (widget.buildingsList.isNotEmpty)
                 for (int index = 0;
-                    index < routeCategoryList.length;
+                    index < widget.buildingsList.length;
                     index++)
                   DropdownMenuItem(
-                      value: routeCategoryList[index],
+                      value: widget.buildingsList[index]["id"],
                       child: Text(
-                          routeCategoryList[index],
+                          widget.buildingsList[index]["name"],
                           style: AppBlackTextStyle.textpBlack)),
             ],
             isExpanded: true,
@@ -718,11 +791,40 @@ void startListening(){
       ),
         AppPadding.verticalPadding,
         ElevatedButton(onPressed: (){
+          
           if (_roomsFormKey.currentState!.validate()) {
-
+              setState(() {
+                isSubmitBtnLoading = true;
+              });
+              Map<String, dynamic> data ={
+                "name": roomName.text,
+                "lat": roomLat.text,
+                "lon": roomLon.text,
+                "altitude": roomAltitude.text,
+                "building": roomBuildingID.toString()
+              };
+              int res = POSTClass.createRoom(data);
+              if (res == 201){
+                _roomsFormKey.currentState?.reset();
+              }
+              setState(() {
+                isSubmitBtnLoading = false;
+              });
           }
         }, 
-        child: Text("Submit"))
+        child:  Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(isSubmitBtnLoading ? "Uploading.." :"Submit"),
+                    AppPadding.horizontalPadding,
+                    isSubmitBtnLoading 
+                    ? const SizedBox(
+                      width: 15,
+                      height: 15,
+                      child:  CircularProgressIndicator(strokeWidth: 2,color: Colors.white, ))
+                    : const SizedBox()
+                  ],
+                ))
               
               ],
             ),
@@ -869,6 +971,7 @@ void startListening(){
               width: deviceSize(context).width*0.18,
               child: ElevatedButton(
                     onPressed: (){
+                      getRoutesFunc();
                       setState(() {
                           activeForm = "coordinate";
                         });

@@ -177,13 +177,13 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                                         child: Column(children: [
                                           TextButton(onPressed: (){
                                             Get.to(()=> CameraScreen());
-                                          }, child: Text("Open Camera")),
+                                          }, child:const Text("Open Camera")),
                                           TextButton(onPressed: (){
-                                            Get.to(()=> LocationsPage());
-                                          }, child: Text("Locations Page")),
+                                            Get.to(()=> LocationsPage(buildingsList: buildingList));
+                                          }, child: const  Text("Locations Page")),
                                           TextButton(onPressed: (){
-                                            Get.to(()=> CompassPage());
-                                          }, child: Text("Compass Page")),
+                                            Get.to(()=> const CompassPage());
+                                          }, child: const Text("Compass Page")),
                                         ]),
                                       ),
                                     ));
