@@ -12,19 +12,10 @@ class GoBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (() => Get.back()),
-      child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-           color: Colors.white,
-        ),
-       
-        width: 25,
-        height: 25,
-        child: Icon(
-          Icons.arrow_back_ios_new_outlined,
-          size: 14,
-          color: Color(color)
-        ),
+      child: Icon(
+        Icons.arrow_back_ios_new_outlined,
+        size: 16,
+        color: Color(color)
       ),
     ) ;
     

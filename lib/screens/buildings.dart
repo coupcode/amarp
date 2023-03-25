@@ -1,4 +1,6 @@
+import 'package:amarp/api/get_class.dart';
 import 'package:amarp/constants.dart';
+import 'package:amarp/controller/controller.dart';
 import 'package:amarp/screens/camera.dart';
 import 'package:amarp/screens/compass.dart';
 import 'package:amarp/screens/locations.dart';
@@ -13,28 +15,30 @@ class BuildingsScreen extends StatefulWidget {
 }
 
 class _BuildingsScreenState extends State<BuildingsScreen> {
-  List buildingList = [
-    {
-    "name": "LT 1",
-    "image": "assets/images/lt1.jpeg",
-    "description": "It is a lecture hall"
-    },
-    {
-    "name": "SH 1",
-    "image": "assets/images/lt1.jpeg",
-    "description": "It is a lecture hall"
-    },
-    {
-    "name": "Auditorium 1",
-    "image": "assets/images/lt1.jpeg",
-    "description": "It is a lecture hall"
-    },
-  ];
+  AppController appController = Get.put(AppController());
+  List buildingList = [];
   List searchedBuildingList =[];
   bool isLoading = false;
   bool searchOpened = false;
 
   final TextEditingController _searchField = TextEditingController();
+
+  fetchInitData() async{
+    setState(() {
+      isLoading = true;
+    });
+    List res = await GETClass.getBuildings();
+    setState(() {
+      buildingList = res;
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    fetchInitData();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -94,18 +98,19 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
           itemBuilder: (((context, index) => Card(
               elevation: 1,
               child: SizedBox(
-                height: 80,
+                height: 95,
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // item image
                       SizedBox(
                         width: deviceSize(context).width * 0.2,
                         child: 
                         searchOpened
                         ? searchedBuildingList[index]["image"] != null
-                            ? Image.asset(searchedBuildingList[index]["image"])
+                            ? Image.network(searchedBuildingList[index]["image"])
                             : Container(
                                 decoration: const BoxDecoration(
                                     borderRadius:
@@ -116,7 +121,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                                         color: Colors.white)),
                               )
                         : buildingList[index]["image"] != null
-                            ? Image.asset(buildingList[index]["image"])
+                            ? Image.network(buildingList[index]["image"])
                             : Container(
                                 decoration: const BoxDecoration(
                                     borderRadius:
@@ -127,27 +132,30 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                                         color: Colors.white)),
                               ),
                       ),
+                      // item name
                       SizedBox(
                         width: deviceSize(context).width * 0.4,
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(searchOpened 
                               ? searchedBuildingList[index]["name"] 
                               : buildingList[index]["name"],
                                   style: AppBlackTextStyle.texth5),
+                              const Divider(),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(searchOpened
-                                      ? "${searchedBuildingList[index]["description"]}"
-                                      : "${buildingList[index]["description"]}",
+                                      ? truncateWithEllipsis(5, searchedBuildingList[index]["description"])
+                                      : truncateWithEllipsis(70, buildingList[index]["description"]),
                                       style: AppBlackTextStyle.textpBlack),
                                   
                                 ],
-                              )
-                            ]),
+                              ),
+                            ]
+                            
+                            ),
                       ),
                       SizedBox(
                           width: deviceSize(context).width * 0.2,
@@ -236,7 +244,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                         child: Text(
                           searchOpened 
                           ? "No result found" 
-                          : "No created event",
+                          : "No building",
                             style: AppBlackTextStyle.textpGrey))
                     : listBuildings()),
     );

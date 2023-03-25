@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const baseUrl = "http://127.0.0.1:8000/";
+const baseUrl = "https://armap.pythonanywhere.com/api/v1";
 // Global methods
 deviceSize(context) {
   return MediaQuery.of(context).size;
@@ -51,14 +51,14 @@ class AppInputFieldDecorations {
 
 class AppWhiteTextStyle {
   static const texth1 =
-      TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white);
+      TextStyle(fontSize: 23, fontWeight: FontWeight.w500, color: Colors.white);
   static const texth2 =
-      TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white);
+      TextStyle(fontSize: 21, fontWeight: FontWeight.w500, color: Colors.white);
   static const texth3 =
-      TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white);
+      TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.white);
   static const texth4 = TextStyle(fontSize: 14, color: Colors.white);
   static const texth5 =
-      TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white);
+      TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.white);
   static const textp =
       TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: Colors.white);
  
@@ -67,19 +67,19 @@ class AppWhiteTextStyle {
 class AppBlackTextStyle {
   
   static const texth1 =
-      TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black);
+      TextStyle(fontSize: 23, fontWeight: FontWeight.w500, color: Colors.black);
   static const texth2 =
-      TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black);
+      TextStyle(fontSize: 24, fontWeight: FontWeight.w500, color: Colors.black);
   static const texth2B =
-      TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.black);
+      TextStyle(fontSize: 21, fontWeight: FontWeight.w700, color: Colors.black);
   static const texth3 =
-      TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black);
+      TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black);
   static const texth4 =
-      TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black);
+      TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black);
   static const texth4B =
-      TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.black);
+      TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black);
   static const texth5 =
-      TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black);
+      TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.black);
   static const textpBlack =
       TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: Colors.black);
   static const textpGrey =

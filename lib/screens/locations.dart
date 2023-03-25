@@ -2,7 +2,9 @@
 import 'dart:async';
 import 'dart:ffi';
 
+import 'package:amarp/api/post_class.dart';
 import 'package:amarp/constants.dart';
+import 'package:amarp/widgets/goback_btn.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -17,11 +19,14 @@ class LocationsPage extends StatefulWidget {
 class _LocationsPageState extends State<LocationsPage> {
   // Controller vars
   bool isLoading = false;
+  bool isSubmitBtnLoading = false;
   String onTopHeight = "down";
   
   final TextEditingController positionValuesTextControl = TextEditingController();
   // Building Text Controllers
   final TextEditingController buildingName = TextEditingController();
+  final TextEditingController buildingDescription = TextEditingController();
+  
   final TextEditingController front_view_lat = TextEditingController();
   final TextEditingController front_view_long = TextEditingController();
   
@@ -75,6 +80,7 @@ class _LocationsPageState extends State<LocationsPage> {
   void dispose() {
     // dispose building controllers
     buildingName.dispose();
+    buildingDescription.dispose();
     front_view_lat.dispose();
     front_view_long.dispose();
     left_view_lat.dispose();
@@ -224,6 +230,24 @@ void startListening(){
                 decoration: AppInputFieldDecorations.decor1,
               ),
               AppPadding.verticalPadding,
+              const Text("Description", style: AppBlackTextStyle.texth5),
+              TextFormField(
+                controller: buildingDescription,
+                style: const TextStyle(fontSize: 12),
+                maxLines: 3,
+                validator: (e) {
+                  if (buildingDescription.text.isEmpty) {
+                    return "This field is required";
+                  } else {
+                    return null;
+                  }
+                },
+                keyboardType: TextInputType.text,
+                decoration: AppInputFieldDecorations.decor1,
+              ),
+              AppPadding.verticalPadding,
+              const Divider(),
+              AppPadding.verticalPadding,
               const Text("front_view_lat", style: AppBlackTextStyle.texth5),
               TextFormField(
                 controller: front_view_lat,
@@ -345,12 +369,47 @@ void startListening(){
               ),
               AppPadding.verticalPadding,
               ElevatedButton(
-                onPressed: (){
+                onPressed: ()async{
+                  print("clicked");
+                  setState(() {
+                    isSubmitBtnLoading = true;
+                  });
                   if (_buildingFormKey.currentState!.validate()) {
-
+                      Map<String, dynamic> data = {
+                      "description": buildingDescription.text,
+                      "name": buildingName.text,
+                      "front_view_lat": front_view_lat.text,
+                      "front_view_long": front_view_long.text,
+                      "left_view_lat": left_view_lat.text,
+                      "left_view_long": left_view_long.text,
+                      "right_view_lat": right_view_lat.text,
+                      "right_view_long": right_view_long.text,
+                      "back_view_lat": back_view_lat.text,
+                      "back_view_long": back_view_long.text
+                    };
+                    int res = await POSTClass.createBuilding(data);
+                    if (res == 201){
+                      _buildingFormKey.currentState?.reset();
+                    }
+                    setState(() {
+                    isSubmitBtnLoading = false;
+                  });
                   }
+                  
                 }, 
-                child: Text("Submit"))
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(isSubmitBtnLoading ? "Uploading.." :"Submit"),
+                    AppPadding.horizontalPadding,
+                    isSubmitBtnLoading 
+                    ? const SizedBox(
+                      width: 15,
+                      height: 15,
+                      child:  CircularProgressIndicator(strokeWidth: 2,color: Colors.white, ))
+                    : const SizedBox()
+                  ],
+                ))
             ],
           ));
     }
@@ -679,7 +738,9 @@ void startListening(){
    
     
     return Scaffold(
-      appBar: AppBar(title: const Text("Location Page", style: AppWhiteTextStyle.texth3,)),
+      appBar: AppBar(
+        leading: const GoBackButton(color: AppColors.whitecode),
+        title: const Text("Admin Data Collection Page", style: AppWhiteTextStyle.texth3,)),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -701,8 +762,18 @@ void startListening(){
                     ? roomForm() 
                     : const Text(""), 
           
-                    Text('ADDRESS: ${_currentAddress ?? ""}'),
-                    const SizedBox(height: 32),
+                    AppPadding.verticalPaddingXXL,
+                    const Divider(),
+                    AppPadding.verticalPaddingXXL,
+
+                    Container(
+                      width: deviceSize(context).width,
+                      height: 80,
+                      child: Text('LOCATION ADDRESS: ${_currentAddress ?? "null"}')),
+                    
+                    AppPadding.verticalPadding,
+                    const Divider(),
+                    AppPadding.verticalPaddingXXL,
                     
                   ],
                 ),
