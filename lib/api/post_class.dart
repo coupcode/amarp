@@ -8,7 +8,6 @@ class POSTClass{
   // Building
   static createBuilding(data) async {
     try{
-      print("started..");
       final headers = {'Content-Type': 'application/json'};
       String jsonBody = json.encode(data);
 
@@ -16,7 +15,6 @@ class POSTClass{
           Uri.parse("$baseUrl/buildings/"),
           headers: headers,
           body: jsonBody);
-      print("STATUS : ${response.statusCode}");
       if (response.statusCode == 201) {
         Get.snackbar(
           'Success',
@@ -28,8 +26,6 @@ class POSTClass{
         Get.snackbar(
           'Failed',
           "Not created",
-          colorText: Color.fromARGB(0, 255, 255, 255),
-          backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
       return 403;
@@ -38,8 +34,6 @@ class POSTClass{
       Get.snackbar(
           'Failed',
           e.toString(),
-          colorText: Color.fromARGB(0, 255, 255, 255),
-          backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
       return 500;
@@ -64,11 +58,9 @@ class POSTClass{
       ) ;
         return 201;
       } else {
-        Get.snackbar(
+        Get.snackbar( 
           'Failed',
           "Not created",
-          colorText: Color.fromARGB(0, 255, 255, 255),
-          backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
         return 403;
@@ -77,8 +69,6 @@ class POSTClass{
       Get.snackbar(
           'Failed',
           e.toString(),
-          colorText: Color.fromARGB(0, 255, 255, 255),
-          backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
       return 500;
@@ -100,14 +90,12 @@ class POSTClass{
           'Success',
           "Room upload successful",
           snackPosition: SnackPosition.TOP
-      ) ;
+      );
       return 201;
       } else {
         Get.snackbar(
           'Failed',
           "Not created",
-          colorText: Color.fromARGB(0, 255, 255, 255),
-          backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
         return 403;
@@ -116,8 +104,6 @@ class POSTClass{
       Get.snackbar(
           'Failed',
           e.toString(),
-          colorText: Color.fromARGB(0, 255, 255, 255),
-          backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
       return 500;
@@ -144,8 +130,6 @@ class POSTClass{
         Get.snackbar(
           'Failed',
           "Not created",
-          colorText: Color.fromARGB(0, 255, 255, 255),
-          backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
         
@@ -154,8 +138,6 @@ class POSTClass{
       Get.snackbar(
           'Failed',
           e.toString(),
-          colorText: Color.fromARGB(0, 255, 255, 255),
-          backgroundColor: Color.fromARGB(0, 240, 0, 0),
           snackPosition: SnackPosition.TOP
       );
     }

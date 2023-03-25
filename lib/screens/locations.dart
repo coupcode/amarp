@@ -382,10 +382,11 @@ void startListening(){
               AppPadding.verticalPadding,
               ElevatedButton(
                 onPressed: ()async{
-                  setState(() {
+                  
+                  if (_buildingFormKey.currentState!.validate()) {
+                      setState(() {
                     isSubmitBtnLoading = true;
                   });
-                  if (_buildingFormKey.currentState!.validate()) {
                       Map<String, dynamic> data = {
                       "description": buildingDescription.text,
                       "name": buildingName.text,
@@ -495,25 +496,19 @@ void startListening(){
         AppPadding.verticalPadding,
         ElevatedButton(
                 onPressed: ()async{
-                  setState(() {
+                  
+                  if (_routeFormKey.currentState!.validate()) {
+                    setState(() {
                     isSubmitBtnLoading = true;
                   });
-                  if (_roomsFormKey.currentState!.validate()) {
                       Map<String, String> data = {
-                      "description": buildingDescription.text,
-                      "name": buildingName.text,
-                      "front_view_lat": front_view_lat.text,
-                      "front_view_long": front_view_long.text,
-                      "left_view_lat": left_view_lat.text,
-                      "left_view_long": left_view_long.text,
-                      "right_view_lat": right_view_lat.text,
-                      "right_view_long": right_view_long.text,
-                      "back_view_lat": back_view_lat.text,
-                      "back_view_long": back_view_long.text
+                      "name": routeName.text,
+                      "category": routeCategory.text
                     };
-                    int res = await POSTClass.createBuilding(data);
+                    int res = await POSTClass.createRoute(data);
                     if (res == 201){
-                      _roomsFormKey.currentState?.reset();
+                      _routeFormKey.currentState?.reset();
+                      
                     }
                     setState(() {
                     isSubmitBtnLoading = false;
@@ -643,11 +638,11 @@ void startListening(){
               setState(() {
                 isSubmitBtnLoading = true;
               });
-              Map<String, String> data = {
+              Map<String, dynamic> data = {
                   "name": coordinateName.text,
                   "lat": coordinateLat.text,
                   "lon": coordinateLon.text,
-                  "route": coordinateRouteID.text
+                  "route": int.parse(coordinateRouteID.text)
               };
               int res = await POSTClass.createCoordinate(data);
               if (res == 201){
@@ -796,12 +791,12 @@ void startListening(){
               setState(() {
                 isSubmitBtnLoading = true;
               });
-              Map<String, dynamic> data ={
+              Map data ={
                 "name": roomName.text,
                 "lat": roomLat.text,
                 "lon": roomLon.text,
                 "altitude": roomAltitude.text,
-                "building": roomBuildingID.toString()
+                "building": roomBuildingID.text
               };
               int res = POSTClass.createRoom(data);
               if (res == 201){

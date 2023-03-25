@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const baseUrl = "https://armap.pythonanywhere.com/api/v1";
+const baseUrl = "http://codingrev.pythonanywhere.com/api/v1";
 // Global methods
 deviceSize(context) {
   return MediaQuery.of(context).size;
