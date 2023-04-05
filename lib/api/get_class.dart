@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:amarp/constants.dart';
-import 'package:amarp/controller/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;

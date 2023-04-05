@@ -401,11 +401,22 @@ void startListening(){
                     };
                     int res = await POSTClass.createBuilding(data);
                     if (res == 201){
-                      _buildingFormKey.currentState?.reset();
+                      setState(() {
+                        buildingDescription.text= "";
+                        buildingName.text= "";                      
+                        front_view_lat.text= "";
+                        front_view_long.text= "";
+                        left_view_lat.text= "";
+                        left_view_long.text= "";
+                        right_view_lat.text= "";
+                        right_view_long.text= "";
+                        back_view_lat.text= "";
+                        back_view_long.text= "";    
+                      });
                     }
                     setState(() {
-                    isSubmitBtnLoading = false;
-                  });
+                      isSubmitBtnLoading = false;
+                    });
                   }
                   
                 }, 
@@ -507,12 +518,14 @@ void startListening(){
                     };
                     int res = await POSTClass.createRoute(data);
                     if (res == 201){
-                      _routeFormKey.currentState?.reset();
-                      
+                      setState(() {
+                        routeName.text = "";
+                        routeCategory.text = "";
+                      });
                     }
                     setState(() {
-                    isSubmitBtnLoading = false;
-                  });
+                      isSubmitBtnLoading = false;
+                    });
                   }
                   
                 }, 
@@ -646,7 +659,12 @@ void startListening(){
               };
               int res = await POSTClass.createCoordinate(data);
               if (res == 201){
-                _coordinateFormKey.currentState?.reset();
+                setState(() {
+                  coordinateName.text="";
+                  coordinateLat.text="";
+                  coordinateLon.text="";
+                  coordinateRouteID.text="";
+                });
               }
               setState(() {
                 isSubmitBtnLoading = false;
@@ -796,11 +814,17 @@ void startListening(){
                 "lat": roomLat.text,
                 "lon": roomLon.text,
                 "altitude": roomAltitude.text,
-                "building": roomBuildingID.text
+                "building": int.parse(roomBuildingID.text)
               };
               int res = POSTClass.createRoom(data);
               if (res == 201){
-                _roomsFormKey.currentState?.reset();
+                setState(() {
+                  roomName.text= "";
+                  roomLat.text= "";
+                  roomLon.text= "";
+                  roomAltitude.text= "";
+                  roomBuildingID.text= "";
+                });
               }
               setState(() {
                 isSubmitBtnLoading = false;

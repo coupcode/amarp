@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:amarp/constants.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,15 +19,15 @@ class POSTClass{
           'Success',
           "Building upload successful",
           snackPosition: SnackPosition.TOP
-      ) ;
-      return 201;
+        );
+        return 201;
       } else {
         Get.snackbar(
           'Failed',
           "Not created",
           snackPosition: SnackPosition.TOP
-      );
-      return 403;
+        );
+        return 403;
       }
     }catch(e){
       Get.snackbar(
@@ -55,14 +54,14 @@ class POSTClass{
           'Success',
           "Coordinate upload successful",
           snackPosition: SnackPosition.TOP
-      ) ;
+        );
         return 201;
       } else {
         Get.snackbar( 
           'Failed',
           "Not created",
           snackPosition: SnackPosition.TOP
-      );
+        );
         return 403;
       }
     }catch(e){
@@ -125,14 +124,15 @@ class POSTClass{
           'Success',
           "Route upload successful",
           snackPosition: SnackPosition.TOP
-      ) ;
+       );
+       return 201;
       } else {
         Get.snackbar(
           'Failed',
           "Not created",
           snackPosition: SnackPosition.TOP
       );
-        
+        return 403;
       }
     }catch(e){
       Get.snackbar(
@@ -140,6 +140,7 @@ class POSTClass{
           e.toString(),
           snackPosition: SnackPosition.TOP
       );
+      return 500;
     }
   }
 

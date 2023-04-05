@@ -147,7 +147,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(searchOpened
-                                      ? truncateWithEllipsis(5, searchedBuildingList[index]["description"])
+                                      ? truncateWithEllipsis(70, searchedBuildingList[index]["description"])
                                       : truncateWithEllipsis(70, buildingList[index]["description"]),
                                       style: AppBlackTextStyle.textpBlack),
                                   
@@ -205,7 +205,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
        appBar:  AppBar(
           title: searchOpened
               ? searchWidget()
-              : const Text("Amarp", style: AppBlackTextStyle.texth4),
+              : const Text("Amarp", style: AppBlackTextStyle.texth2),
 
           elevation: 0,
           // centerTitle: true,
