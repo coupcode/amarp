@@ -1,9 +1,9 @@
 import 'package:amarp/api/get_class.dart';
 import 'package:amarp/constants.dart';
 import 'package:amarp/controller/controller.dart';
-import 'package:amarp/screens/camera.dart';
-import 'package:amarp/screens/compass.dart';
-import 'package:amarp/screens/locations.dart';
+import 'package:amarp/screens/navigation_page.dart';
+import 'package:amarp/screens/data_collection_page.dart';
+import 'package:amarp/widgets/custom_floatingbtn.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,7 +16,23 @@ class BuildingsScreen extends StatefulWidget {
 
 class _BuildingsScreenState extends State<BuildingsScreen> {
   AppController appController = Get.put(AppController());
-  List buildingList = [];
+  List buildingList = [{
+    'id': 2, 
+    'created_at': '2023-03-25T18:21:16.069436Z', 
+    'updated_at': '2023-03-25T17:43:15.316014Z', 
+    'name': "UENR Auditorium",
+    'description': 'Test Auditorium, description: This is a test description about the test auditorium. Lorem tests hahaha',
+    'image': 'assets/images/uenr-logo.jpeg',
+    'front_view_lat': null, 
+    'front_view_long': null, 
+    'left_view_lat': null, 
+    'left_view_long': null, 
+    'right_view_lat': null, 
+    'right_view_long': null, 
+    'back_view_lat': null, 
+    'back_view_long': null
+  }];
+  
   List searchedBuildingList =[];
   bool isLoading = false;
   bool searchOpened = false;
@@ -36,7 +52,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
 
   @override
   void initState() {
-    fetchInitData();
+    // fetchInitData();
     super.initState();
   }
 
@@ -102,7 +118,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    
                     children: [
                       // item image
                       SizedBox(
@@ -110,7 +126,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                         child: 
                         searchOpened
                         ? searchedBuildingList[index]["image"] != null
-                            ? Image.network(searchedBuildingList[index]["image"])
+                            ? Image.asset(searchedBuildingList[index]["image"])
                             : Container(
                                 decoration: const BoxDecoration(
                                     borderRadius:
@@ -121,7 +137,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                                         color: Colors.white)),
                               )
                         : buildingList[index]["image"] != null
-                            ? Image.network(buildingList[index]["image"])
+                            ? Image.asset(buildingList[index]["image"])
                             : Container(
                                 decoration: const BoxDecoration(
                                     borderRadius:
@@ -133,6 +149,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                               ),
                       ),
                       // item name
+                      AppPadding.horizontalPadding,
                       SizedBox(
                         width: deviceSize(context).width * 0.4,
                         child: Column(
@@ -155,46 +172,8 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                               ),
                             ]
                             
-                            ),
+                        )
                       ),
-                      SizedBox(
-                          width: deviceSize(context).width * 0.2,
-                          child: Column(
-                            children: [
-                              const Text("View",
-                                  style: AppBlackTextStyle.textpBlack),
-                              TextButton(
-                                  onPressed: () {
-                                    Get.bottomSheet(Container(
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(15),
-                                              topRight: Radius.circular(15))),
-                                      height: 160,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(children: [
-                                          TextButton(onPressed: (){
-                                            Get.to(()=> CameraScreen());
-                                          }, child:const Text("Open Camera")),
-                                          TextButton(onPressed: (){
-                                            Get.to(()=> LocationsPage(buildingsList: buildingList));
-                                          }, child: const  Text("Locations Page")),
-                                          TextButton(onPressed: (){
-                                            Get.to(()=> const CompassPage());
-                                          }, child: const Text("Compass Page")),
-                                        ]),
-                                      ),
-                                    ));
-                                  },
-                                  child: const Icon(
-                                    Icons.more_vert,
-                                    color: Colors.black,
-                                    size: 20,
-                                  )),
-                            ],
-                          ))
                     ],
                   ),
                 ),
@@ -247,6 +226,28 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
                           : "No building",
                             style: AppBlackTextStyle.textpGrey))
                     : listBuildings()),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          CustomFloatingActionButton(
+            text: "Navigation Screen", 
+            icon: Icons.camera, 
+            onPressed: (){
+              Get.to(()=> NavigationPage());
+            }, 
+            color: Colors.blue.withOpacity(0.8)
+          ),
+          AppPadding.verticalPadding,
+          CustomFloatingActionButton(
+            text: "Data Collection", 
+            icon: Icons.note_add_sharp, 
+            onPressed: (){
+              Get.to(()=> DataCollectionPage(buildingsList: buildingList));
+            }, 
+            color: Colors.red.withOpacity(0.8)
+          ),
+        ],
+      )
     );
   }
 }

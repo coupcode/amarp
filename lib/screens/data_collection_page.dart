@@ -10,14 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
-class LocationsPage extends StatefulWidget {
-  LocationsPage({Key? key, required this.buildingsList}) : super(key: key);
+class DataCollectionPage extends StatefulWidget {
+  DataCollectionPage({Key? key, required this.buildingsList}) : super(key: key);
   List buildingsList;
   @override
-  State<LocationsPage> createState() => _LocationsPageState();
+  State<DataCollectionPage> createState() => _DataCollectionPageState();
 }
 
-class _LocationsPageState extends State<LocationsPage> {
+class _DataCollectionPageState extends State<DataCollectionPage> {
   List apiRoutesList = [];
   getRoutesFunc()async{
     setState(() {
