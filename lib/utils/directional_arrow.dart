@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DirectionalArrow extends StatefulWidget {
-  DirectionalArrow({Key? key, required this.heading, this.next_latitude=37.422676, this.next_longitude=-122.0849801}) : super(key: key);
+  DirectionalArrow({Key? key, required this.heading, this.next_latitude=-33.865143, this.next_longitude=151.209900}) : super(key: key);
   double heading;
   double next_latitude;
   double next_longitude;

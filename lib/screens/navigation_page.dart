@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:geolocator/geolocator.dart';
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:async';
 
 
 class NavigationPage extends StatefulWidget {
+  NavigationPage({Key? key, required this.routes}) : super(key: key);
+  List routes;
   @override
   _NavigationPageState createState() => _NavigationPageState();
 }
@@ -19,9 +21,85 @@ class _NavigationPageState extends State<NavigationPage> {
   late CameraController controller;
   late List<CameraDescription> cameras;
   bool isLoading = true;
+  bool routeSelected = false;
+  List selectedRoute = [];
   
   Position? _userLocation;
   double? _targetBearing;
+
+  // Selected route Values
+  List G_closestRoute = [];
+  double G_closestRouteDistanceInMeters = 0;
+  int G_closestSubRouteIndexInRoute = 0;
+  String G_closestSubRouteKeyName = '';
+  int G_closestCoordInSubRouteIndex = 0;
+
+  // Calculate and choose route for user
+  double degreesToRadians(double degrees) {
+    return degrees * (pi / 180.0);
+  }
+  selectRouteForUser(List<String> userCoordinate){
+    const double earthRadius = 6371.0; // Earth's radius in kilometers
+    double userLat = degreesToRadians(double.parse(userCoordinate[1]));
+    double userLon = degreesToRadians(double.parse(userCoordinate[0]));
+    
+    // Looping through possible routes to find the closest one to user
+    List closestRoute = widget.routes[0];
+    double closestRouteDistanceInMeters = 0;
+
+    int closestSubRouteIndexInRoute = 0;
+    String closestSubRouteKeyName = '';
+
+    int closestCoordInSubRouteIndex = 0;
+
+    for (int index1=0; index1 < widget.routes.length; index1++){
+        List route = widget.routes[index1];
+        for (int subRouteIndex=0; subRouteIndex < route.length; subRouteIndex++){
+          Map subRoute = route[subRouteIndex];
+          String subRouteKeyName = subRoute.keys.first;
+          for (int coordIndex=0; coordIndex < subRoute[subRouteKeyName].length; coordIndex++){
+              double lat2 = degreesToRadians(double.parse(subRoute[subRouteKeyName][coordIndex][1]));
+              double lon2 = degreesToRadians(double.parse(subRoute[subRouteKeyName][coordIndex][0]));
+
+              double dLat = lat2 - userLat;
+              double dLon = lon2 - userLon;
+
+              double a = pow(sin(dLat / 2), 2) + 
+                  cos(userLat) * cos(lat2) * pow(sin(dLon / 2), 2);
+              double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+              double distance = earthRadius * c * 1000; // Convert to meters
+              
+              if (index1 ==0 && subRouteIndex == 0 && coordIndex == 0){
+                closestRouteDistanceInMeters = distance;
+                closestRouteDistanceInMeters = distance;
+                closestRoute = widget.routes[index1];
+                closestSubRouteIndexInRoute = subRouteIndex;
+                closestSubRouteKeyName = subRouteKeyName;
+                closestCoordInSubRouteIndex=coordIndex;
+              }
+              else if (distance > closestRouteDistanceInMeters){
+                closestRouteDistanceInMeters = distance;
+                closestRoute = widget.routes[index1];
+                closestSubRouteIndexInRoute = subRouteIndex;
+                closestSubRouteKeyName = subRouteKeyName;
+                closestCoordInSubRouteIndex=coordIndex;
+              }
+          }
+        }
+    }
+    setState(() {
+      // Set Global values
+      G_closestRoute = closestRoute;
+      G_closestRouteDistanceInMeters = closestRouteDistanceInMeters;
+      G_closestSubRouteIndexInRoute = closestSubRouteIndexInRoute;
+      G_closestSubRouteKeyName = closestSubRouteKeyName;
+      G_closestCoordInSubRouteIndex = closestCoordInSubRouteIndex;
+
+      isLoading=false;
+      routeSelected=true;
+    });
+  }
 
   @override
   void initState() {
@@ -32,11 +110,11 @@ class _NavigationPageState extends State<NavigationPage> {
         _heading = event.heading ?? 0.0;
       });
     });
-    // listen to user position every 3 secs
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    // listen to user position every 5 secs
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       startListening();
     });
-
+  
     super.initState();
   }
 
@@ -53,10 +131,13 @@ class _NavigationPageState extends State<NavigationPage> {
     _userLocation = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.bestForNavigation,
     );
+    // Selecting route based on user location
+    if(!routeSelected){
+      selectRouteForUser([_userLocation!.longitude.toString(), _userLocation!.latitude.toString()]);
+    }
     // Update the UI with the new bearing angle
     setState(() {
         _userLocation = _userLocation;
-        isLoading = false;
     });
   }
 
@@ -69,10 +150,22 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: 
        isLoading
-       ? const Center(child: CircularProgressIndicator())
+       ? Column(
+         mainAxisAlignment: MainAxisAlignment.center,
+        //  crossAxisAlignment: CrossAxisAlignment.center,
+         children:  const [
+          Text("Calculating route..."),
+          AppPadding.verticalPadding,
+           Padding(
+             padding: EdgeInsets.symmetric(horizontal: AppPadding.screenPaddingXXL),
+             child: LinearProgressIndicator(),
+           ),
+         ],
+       )
        : Stack(
             children:[
                SizedBox(
@@ -85,15 +178,20 @@ class _NavigationPageState extends State<NavigationPage> {
                   Align(
                     alignment: Alignment.topCenter,
                     child: DirectionalArrow(
-                      heading: _heading
+                      heading: _heading,
+                      next_latitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][1]),
+                      next_longitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][0]),
                     )
                   ),
                   // Data about user and device
                   Container(
+                    margin: EdgeInsets.only(top: deviceSize(context).height*0.3),
                     color: Colors.white,
                     child: Column(
                       children: [
-                        Text("${_userLocation!}", style: TextStyle(color: Colors.green, fontSize: 20)),
+                        Text("Closest SubRoute Dist: $G_closestRouteDistanceInMeters metres", style: TextStyle(color: Colors.green, fontSize: 20)),
+                        Text("Closest SubRoute Name: $G_closestSubRouteKeyName", style: TextStyle(color: Colors.blue, fontSize: 20)),
+                        Text("Closest SubRoute CoordIndex: $G_closestCoordInSubRouteIndex", style: TextStyle(color: Colors.red, fontSize: 20)),
                         Text("Heading : ${_heading}", style: TextStyle(color: Colors.green, fontSize: 20)),
                       ],
                     ),
