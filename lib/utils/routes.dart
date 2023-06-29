@@ -1,4 +1,4 @@
-
+// NB, [lat, lon]
 List entranceToAuditorium= [{
   "Entrance_To_FrontView_of_Finance": [
     ["7.3492024", "-2.3438317"], 
