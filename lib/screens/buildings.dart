@@ -32,7 +32,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
     'right_view_long': null, 
     'back_view_lat': null, 
     'back_view_long': null,
-    'routes': [entranceToAuditorium]
+    'routes': [entranceToAuditorium1, entranceToAuditorium2]
   }];
   
   List searchedBuildingList =[];

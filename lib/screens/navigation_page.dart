@@ -21,6 +21,7 @@ class _NavigationPageState extends State<NavigationPage> {
   late CameraController controller;
   late List<CameraDescription> cameras;
   bool isLoading = true;
+  double isLoadingProgressPercentage = 0.0;
   bool routeSelected = false;
   List selectedRoute = [];
   
@@ -46,11 +47,12 @@ class _NavigationPageState extends State<NavigationPage> {
     // Looping through possible routes to find the closest one to user
     List closestRoute = widget.routes[0];
     double closestRouteDistanceInMeters = 0;
-
     int closestSubRouteIndexInRoute = 0;
     String closestSubRouteKeyName = '';
-
     int closestCoordInSubRouteIndex = 0;
+
+    // Handling progress indicator status
+    double progressInterval = 0.5/widget.routes.length;
 
     for (int index1=0; index1 < widget.routes.length; index1++){
         List route = widget.routes[index1];
@@ -69,21 +71,38 @@ class _NavigationPageState extends State<NavigationPage> {
               double c = 2 * atan2(sqrt(a), sqrt(1 - a));
 
               double distance = earthRadius * c * 1000; // Convert to meters
-              
+
               if (index1 ==0 && subRouteIndex == 0 && coordIndex == 0){
                 closestRouteDistanceInMeters = distance;
+                closestRoute = widget.routes[index1];
+                closestSubRouteIndexInRoute = subRouteIndex;
+                closestSubRouteKeyName = subRouteKeyName;
+                closestCoordInSubRouteIndex=coordIndex;
+                // update start progress
+                setState(() {
+                  isLoadingProgressPercentage += progressInterval/2; 
+                });
+              }
+              if (distance < closestRouteDistanceInMeters){
                 closestRouteDistanceInMeters = distance;
                 closestRoute = widget.routes[index1];
                 closestSubRouteIndexInRoute = subRouteIndex;
                 closestSubRouteKeyName = subRouteKeyName;
                 closestCoordInSubRouteIndex=coordIndex;
               }
-              else if (distance > closestRouteDistanceInMeters){
-                closestRouteDistanceInMeters = distance;
-                closestRoute = widget.routes[index1];
-                closestSubRouteIndexInRoute = subRouteIndex;
-                closestSubRouteKeyName = subRouteKeyName;
-                closestCoordInSubRouteIndex=coordIndex;
+
+              // update last progress
+              if(subRouteIndex == route.length -1){
+                double newVal = isLoadingProgressPercentage + (progressInterval/2);
+                setState(() {
+                    if(newVal>1){
+                      isLoadingProgressPercentage = 1;
+                    }
+                    else{
+                      isLoadingProgressPercentage += (progressInterval/2);
+                    }
+                    
+                });
               }
           }
         }
@@ -110,7 +129,11 @@ class _NavigationPageState extends State<NavigationPage> {
         _heading = event.heading ?? 0.0;
       });
     });
-    // listen to user position every 5 secs
+    // update progress
+    setState(() {
+      isLoadingProgressPercentage += 0.25;
+    });
+    // listen to user position every 10 secs
     _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       startListening();
     });
@@ -127,6 +150,10 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 
    void startListening() async {
+    // update progress
+    setState(() {
+      isLoadingProgressPercentage += 0.25;
+    });
     // Get the user's current location
     _userLocation = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.bestForNavigation,
@@ -157,12 +184,12 @@ class _NavigationPageState extends State<NavigationPage> {
        ? Column(
          mainAxisAlignment: MainAxisAlignment.center,
         //  crossAxisAlignment: CrossAxisAlignment.center,
-         children:  const [
-          Text("Calculating route..."),
+         children:  [
+          const Text("Calculating route..."),
           AppPadding.verticalPadding,
            Padding(
-             padding: EdgeInsets.symmetric(horizontal: AppPadding.screenPaddingXXL),
-             child: LinearProgressIndicator(),
+             padding: const EdgeInsets.symmetric(horizontal: AppPadding.screenPaddingXXL),
+             child: LinearProgressIndicator(value: isLoadingProgressPercentage),
            ),
          ],
        )
@@ -189,7 +216,7 @@ class _NavigationPageState extends State<NavigationPage> {
                     color: Colors.white,
                     child: Column(
                       children: [
-                        Text("Closest SubRoute Dist: $G_closestRouteDistanceInMeters metres", style: TextStyle(color: Colors.green, fontSize: 20)),
+                        Text("Closest SubRoute Dist: ${G_closestRouteDistanceInMeters/1000} metres", style: TextStyle(color: Colors.green, fontSize: 20)),
                         Text("Closest SubRoute Name: $G_closestSubRouteKeyName", style: TextStyle(color: Colors.blue, fontSize: 20)),
                         Text("Closest SubRoute CoordIndex: $G_closestCoordInSubRouteIndex", style: TextStyle(color: Colors.red, fontSize: 20)),
                         Text("Heading : ${_heading}", style: TextStyle(color: Colors.green, fontSize: 20)),
