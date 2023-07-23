@@ -39,7 +39,7 @@ class _NavigationPageState extends State<NavigationPage> {
   double degreesToRadians(double degrees) {
     return degrees * (pi / 180.0);
   }
-  selectRouteForUser(List<String> userCoordinate){
+  void selectRouteForUser(List<String> userCoordinate){
     const double earthRadius = 6371.0; // Earth's radius in kilometers
     double userLat = degreesToRadians(double.parse(userCoordinate[1]));
     double userLon = degreesToRadians(double.parse(userCoordinate[0]));
@@ -78,7 +78,8 @@ class _NavigationPageState extends State<NavigationPage> {
                 closestSubRouteIndexInRoute = subRouteIndex;
                 closestSubRouteKeyName = subRouteKeyName;
                 closestCoordInSubRouteIndex=coordIndex;
-                // update start progress
+                // update start progress indicator
+
                 setState(() {
                   isLoadingProgressPercentage += progressInterval/2; 
                 });
@@ -91,7 +92,7 @@ class _NavigationPageState extends State<NavigationPage> {
                 closestCoordInSubRouteIndex=coordIndex;
               }
 
-              // update last progress
+              // update last progress indicator
               if(subRouteIndex == route.length -1){
                 double newVal = isLoadingProgressPercentage + (progressInterval/2);
                 setState(() {

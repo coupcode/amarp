@@ -65,51 +65,246 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
         }
       }
-      String location = getNextCoordLocation(widget.next_latitude, widget.next_longitude);
-
-      // Heading == Location
+      // String location = getNextCoordLocation(widget.next_latitude, widget.next_longitude);
+      String location = "NE";
       print('Next coord position : $location');
-      if(widget.heading >= coordInterval[location][0] && widget.heading <= coordInterval[location][1]){
-        return Image.asset(
-            arrowsMap["straight"],
-            width: 200
-        );
-      }
-      // Location on 45deg Left
-      else if(widget.heading >= coordInterval[location][1] && widget.heading <= coordInterval[location][1]+45){
-        return Image.asset(
-          arrowsMap["semi-left"],
-          width: 200,
-        );
-      }
-      // Location on 45 deg right
-      else if(widget.heading >= coordInterval[location][0]-45 && widget.heading <= coordInterval[location][0]){
-        return Image.asset(
-          arrowsMap["semi-right"],
-          width: 200,
-        );
-      }
-      // Location on sharp left
-      else if(widget.heading >= coordInterval[location][1]+45 && widget.heading <= coordInterval[location][1]+135){
-        return Image.asset(
-          arrowsMap["sharp-left"],
-          width: 200,
-        );
-      }
-      // Location on sharp right
-      else if(widget.heading >= coordInterval[location][0]-135 && widget.heading <= coordInterval[location][0]-45){
-        return Image.asset(
-          arrowsMap["sharp-right"],
-          width: 200,
-        );
-      }
+      /* =================================== 
+      Handling if next coordinate is NORTH
+      =====================================*/
+      if(location == 'N' || location == 'NW' || location == 'NE'){
+        print('CAME NORTH');
+        if(widget.heading >= coordInterval[location][0] && widget.heading <= coordInterval[location][1]){
+          return Image.asset(
+              arrowsMap["straight"],
+              width: 200
+          );
+        }
+        // Location on 45deg Left
+        else if(widget.heading >= coordInterval[location][1] && widget.heading <= coordInterval[location][1]+45){
+          return Image.asset(
+            arrowsMap["semi-left"],
+            width: 200,
+          );
+        }
+        // Location on 45 deg right
+        else if(widget.heading >= coordInterval[location][0]-45 && widget.heading <= coordInterval[location][0]){
+          return Image.asset(
+            arrowsMap["semi-right"],
+            width: 200,
+          );
+        }
+        // Location on sharp left
+        else if(widget.heading >= coordInterval[location][1]+45 && widget.heading <= coordInterval[location][1]+135){
+          return Image.asset(
+            arrowsMap["sharp-left"],
+            width: 200,
+          );
+        }
+        // Location on sharp right
+        else if(widget.heading >= coordInterval[location][0]-135 && widget.heading <= coordInterval[location][0]-45){
+          return Image.asset(
+            arrowsMap["sharp-right"],
+            width: 200,
+          );
+        }
 
-      else{
-        return Image.asset(
-          arrowsMap["back"],
-          width: 200,
-        );
+        else{
+          return Image.asset(
+            arrowsMap["back"],
+            width: 200,
+          );
+        }
       }
+      /* =====================================
+      Handling if next coordinate is SOUTH
+      =======================================*/
+      // SOUTH: SS
+      else if(location == 'SS'){
+        print('CAME SS');
+        // Straight
+        if(widget.heading >= coordInterval[location][0] && widget.heading <= coordInterval[location][1]){
+          return Image.asset(
+              arrowsMap["straight"],
+              width: 200
+          );
+        }
+        // Location on 45deg Left
+        else if(widget.heading >= -coordInterval[location][1] && widget.heading <= (-coordInterval[location][1]+45)){
+          return Image.asset(
+            arrowsMap["semi-left"],
+            width: 200,
+          );
+        }
+        // Location on 45 deg right
+        else if(widget.heading >= coordInterval[location][0]-45 && widget.heading <= coordInterval[location][0]){
+          return Image.asset(
+            arrowsMap["semi-right"],
+            width: 200,
+          );
+        }
+        // Location on sharp left
+        else if(widget.heading >= (-coordInterval[location][1]+45) && widget.heading <= (-coordInterval[location][1]+135)){
+          return Image.asset(
+            arrowsMap["sharp-left"],
+            width: 200,
+          );
+        }
+        // Location on sharp right
+        else if(widget.heading >= coordInterval[location][0]-135 && widget.heading <= coordInterval[location][0]-45){
+          return Image.asset(
+            arrowsMap["sharp-right"],
+            width: 200,
+          );
+        }
+
+        else{
+          return Image.asset(
+            arrowsMap["back"],
+            width: 200,
+          );
+        }
+      }
+      // SOUTH: S
+      else if(location == 'S'){
+         print('CAME S');
+        // Straight
+        if(widget.heading >= coordInterval[location][1] && widget.heading <= coordInterval[location][0]){
+          return Image.asset(
+              arrowsMap["straight"],
+              width: 200
+          );
+        }
+        // Location on 45deg Left
+        else if(widget.heading >= coordInterval[location][0] && widget.heading <= (coordInterval[location][0]+45)){
+          return Image.asset(
+            arrowsMap["semi-left"],
+            width: 200,
+          );
+        }
+        // Location on 45 deg right
+        else if(widget.heading >= -coordInterval[location][0] && widget.heading <= -coordInterval[location][1]){
+          return Image.asset(
+            arrowsMap["semi-right"],
+            width: 200,
+          );
+        }
+        // Location on sharp left
+        else if(widget.heading >= (coordInterval[location][0]+45) && widget.heading <= (coordInterval[location][0]+135)){
+          return Image.asset(
+            arrowsMap["sharp-left"],
+            width: 200,
+          );
+        }
+        // Location on sharp right
+        else if(widget.heading >= -coordInterval[location][0]-45 && widget.heading <= -coordInterval[location][0]){
+          return Image.asset(
+            arrowsMap["sharp-right"],
+            width: 200,
+          );
+        }
+
+        else{
+          return Image.asset(
+            arrowsMap["back"],
+            width: 200,
+          );
+        }
+      }
+      // SOUTH: SW
+      else if(location == 'SW'){
+        print('CAME SW');
+        // Straight
+        if(widget.heading >= coordInterval[location][1] && widget.heading <= coordInterval[location][0]){
+          return Image.asset(
+              arrowsMap["straight"],
+              width: 200
+          );
+        }
+        // Location on 45deg Left
+        else if(widget.heading >= coordInterval[location][0] && widget.heading <= (coordInterval[location][0]+45)){
+          return Image.asset(
+            arrowsMap["semi-left"],
+            width: 200,
+          );
+        }
+        // Location on 45 deg right
+        else if(widget.heading >= coordInterval[location][1]-45 && widget.heading <= coordInterval[location][1]){
+          return Image.asset(
+            arrowsMap["semi-right"],
+            width: 200,
+          );
+        }
+        // Location on sharp left
+        else if(widget.heading >= (coordInterval[location][0]+45) && widget.heading <= (coordInterval[location][0]+135)){
+          return Image.asset(
+            arrowsMap["sharp-left"],
+            width: 200,
+          );
+        }
+        // Location on sharp right
+        else if(widget.heading >= 135 && widget.heading <= 179){
+          return Image.asset(
+            arrowsMap["sharp-right"],
+            width: 200,
+          );
+        }
+
+        else{
+          return Image.asset(
+            arrowsMap["back"],
+            width: 200,
+          );
+        }
+      }
+      else if(location == 'SE'){
+        print('CAME SE');
+        // Straight
+        if(widget.heading >= coordInterval[location][0] && widget.heading <= coordInterval[location][1]){
+          return Image.asset(
+              arrowsMap["straight"],
+              width: 200
+          );
+        }
+        // Location on 45deg Left
+        else if(widget.heading >= coordInterval[location][1] && widget.heading <= (coordInterval[location][1]+45)){
+          return Image.asset(
+            arrowsMap["semi-left"],
+            width: 200,
+          );
+        }
+        // Location on 45 deg right
+        else if(widget.heading >= coordInterval[location][0]-45 && widget.heading <= coordInterval[location][0]){
+          return Image.asset(
+            arrowsMap["semi-right"],
+            width: 200,
+          );
+        }
+        // Location on sharp left
+        else if(widget.heading >= -179 && widget.heading <= -135){
+          return Image.asset(
+            arrowsMap["sharp-left"],
+            width: 200,
+          );
+        }
+        // Location on sharp right
+        else if(widget.heading >= coordInterval[location][0]-135 && widget.heading <= coordInterval[location][0]-45){
+          return Image.asset(
+            arrowsMap["sharp-right"],
+            width: 200,
+          );
+        }
+
+        else{
+          return Image.asset(
+            arrowsMap["back"],
+            width: 200,
+          );
+        }
+      }
+      else{
+        return const SizedBox();
+      }
+      
     }
     return activeArrow();
   }
