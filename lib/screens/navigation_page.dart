@@ -159,10 +159,15 @@ class _NavigationPageState extends State<NavigationPage> {
     _userLocation = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.bestForNavigation,
     );
-    // Selecting route based on user location
+    // ON START: Selecting starting route based on user location
     if(!routeSelected){
       selectRouteForUser([_userLocation!.longitude.toString(), _userLocation!.latitude.toString()]);
     }
+    // ON MOVE AFTER START: Progressing to the next routes (directing user)
+    // else{
+
+    // }
+
     // Update the UI with the new bearing angle
     setState(() {
         _userLocation = _userLocation;
