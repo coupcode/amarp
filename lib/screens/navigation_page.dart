@@ -7,6 +7,8 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:math';
 import 'dart:async';
 
+import 'package:get/get.dart';
+
 
 class NavigationPage extends StatefulWidget {
   NavigationPage({Key? key, required this.routes}) : super(key: key);
@@ -164,9 +166,37 @@ class _NavigationPageState extends State<NavigationPage> {
       selectRouteForUser([_userLocation!.longitude.toString(), _userLocation!.latitude.toString()]);
     }
     // ON MOVE AFTER START: Progressing to the next routes (directing user)
-    // else{
-
-    // }
+    else{
+      //TODO: Check distance between user current location in relative to moving towards the next one
+      /* ============================================================================
+        * Move user systematically
+          -- Check the distance of the user to ensure movement towards nex coordinate
+          -- Last coordinate in a route == final destination
+      ==============================================================================*/
+      // FULL SAMPLE PATH(FOR REFERENCE SAKE): var currentCoord = G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex];
+      
+      // CASE 1: If G_closestCoordInSubRouteIndex < G_closestSubRouteKeyName Array length
+      if(G_closestCoordInSubRouteIndex < G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName].length - 1){
+        setState(() {
+          G_closestCoordInSubRouteIndex += 1;    
+        });
+      }
+      // CASE 2: If G_closestCoordInSubRouteIndex == G_closestSubRouteKeyName Array length
+      else{
+        // CASE 2-1: Check if destination reach (Meaning that is the last coord in the route)
+        if(G_closestSubRouteIndexInRoute == G_closestRoute.length-1){
+          Get.snackbar("AT DESTINATION", "Trip should end, because you are at the destination");
+        }
+        // CASE 2-2: Move to the next G_closestSubRouteKeyName
+        else{
+          setState(() {
+            G_closestSubRouteIndexInRoute += 1;
+            G_closestSubRouteKeyName = G_closestRoute[G_closestSubRouteIndexInRoute].keys.first;
+          });
+        }
+      }
+    
+    }
 
     // Update the UI with the new bearing angle
     setState(() {
@@ -229,7 +259,6 @@ class _NavigationPageState extends State<NavigationPage> {
                       ],
                     ),
                   )
-                  
                 ],
               ),
               // Old arrow pointers below
