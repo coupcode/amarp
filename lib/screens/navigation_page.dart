@@ -128,7 +128,7 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 
   StreamSubscription<CompassEvent>? _compassSubscription;
-
+  int userDistanceToActiveCoord = 0;
   @override
   void initState() {
     initializeCamera();
@@ -160,62 +160,91 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 
    void startListening() async {
-    // update progress
-    setState(() {
-      isLoadingProgressPercentage += 0.25;
-    });
-    // Get the user's current location
-    _userLocation = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.bestForNavigation,
-    );
-    // ON START: Selecting starting route based on user location
-    if(!routeSelected){
-      selectRouteForUser([_userLocation!.longitude.toString(), _userLocation!.latitude.toString()]);
-    }
-    // ON MOVE AFTER START: Progressing to the next routes (directing user)
-    else{
-      //TODO: Check distance between user current location in relative to moving towards the next one
-      /* ============================================================================
-        * Move user systematically
-          -- Check the distance of the user to ensure movement towards nex coordinate
-          -- Last coordinate in a route == final destination
-      ==============================================================================*/
-      // FULL SAMPLE PATH(FOR REFERENCE SAKE): var currentCoord = G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex];
-      
-      // CASE 1: If G_closestCoordInSubRouteIndex < G_closestSubRouteKeyName Array length
-      if(G_closestCoordInSubRouteIndex < G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName].length - 1){
-        setState(() {
-          G_closestCoordInSubRouteIndex += 1;    
-        });
+      // update progress
+      setState(() {
+        isLoadingProgressPercentage += 0.25;
+      });
+      // Get the user's current location
+      _userLocation = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.bestForNavigation,
+      );
+      // ON START: Selecting starting route based on user location
+      if(!routeSelected){
+        selectRouteForUser([_userLocation!.longitude.toString(), _userLocation!.latitude.toString()]);
       }
-      // CASE 2: If G_closestCoordInSubRouteIndex == G_closestSubRouteKeyName Array length
+      // ON MOVE AFTER START: Progressing to the next routes (directing user)
       else{
-        // CASE 2-1: Check if destination reach (Meaning that is the last coord in the route)
-        if(G_closestSubRouteIndexInRoute == G_closestRoute.length-1){
-          Get.snackbar("AT DESTINATION", "redirecting...", colorText: Colors.white);
-          Timer(const Duration(seconds: 1), () {
-          Get.off(() => SuccessPage(destinationName: widget.destinationName, imagePath: widget.imagePath));
-          });
-        }
-        // CASE 2-2: Move to the next G_closestSubRouteKeyName
-        else{
-          int newLocalGclosestSubRouteIndexInRoute = G_closestSubRouteIndexInRoute + 1;
-          setState(() {
-            G_closestSubRouteIndexInRoute = newLocalGclosestSubRouteIndexInRoute;
-            G_closestSubRouteKeyName = G_closestRoute[newLocalGclosestSubRouteIndexInRoute].keys.first;
-            G_closestCoordInSubRouteIndex = 0;
-          });
+        // Check distance between user current location in relative to moving towards the next one
+        /* ============================================================================
+          * Move user systematically
+            -- Last coordinate in a route == final destination
+        ==============================================================================*/
+        int userAndActiveCoordInterval = userDistanceAndTargetCoordinatesInMeters(
+          [_userLocation!.longitude.toString(), _userLocation!.latitude.toString()],
+          [
+            G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][1], // lon
+            G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][0] // lat
+          ]
+        );
+        // TODO: Remove, just for analytical evidence
+        setState(() {
+            userDistanceToActiveCoord = userAndActiveCoordInterval;
+        });
+        
+        // Check if user is 1 metre or less to the active coordinate (THEN: switch to the next coordinate)
+        if(userAndActiveCoordInterval <= 2){
+          // CASE 1: If G_closestCoordInSubRouteIndex < G_closestSubRouteKeyName Array length
+          if(G_closestCoordInSubRouteIndex < G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName].length - 1){
+            setState(() {
+              G_closestCoordInSubRouteIndex += 1;    
+            });
+          }
+          // CASE 2: If G_closestCoordInSubRouteIndex == G_closestSubRouteKeyName Array length
+          else{
+            // CASE 2-1: Check if destination reach (Meaning that is the last coord in the route)
+            if(G_closestSubRouteIndexInRoute == G_closestRoute.length-1){
+              Get.snackbar("AT DESTINATION", "redirecting...", colorText: Colors.white);
+              Timer(const Duration(seconds: 1), () {
+              Get.off(() => SuccessPage(destinationName: widget.destinationName, imagePath: widget.imagePath));
+              });
+            }
+            // CASE 2-2: Move to the next G_closestSubRouteKeyName
+            else{
+              int newLocalGclosestSubRouteIndexInRoute = G_closestSubRouteIndexInRoute + 1;
+              setState(() {
+                G_closestSubRouteIndexInRoute = newLocalGclosestSubRouteIndexInRoute;
+                G_closestSubRouteKeyName = G_closestRoute[newLocalGclosestSubRouteIndexInRoute].keys.first;
+                G_closestCoordInSubRouteIndex = 0;
+              });
+            }
+          }
         }
       }
-    
-    }
 
-    // Update the UI with the new bearing angle
-    setState(() {
-        _userLocation = _userLocation;
-    });
+      // Update the UI with the new bearing angle
+      setState(() {
+          _userLocation = _userLocation;
+      });
   }
 
+  int userDistanceAndTargetCoordinatesInMeters(List<String> userCoordinate, List<String> targetCoordinate){
+    const double earthRadius = 6371.0; // Earth's radius in kilometers
+    double userLat = degreesToRadians(double.parse(userCoordinate[1]));
+    double userLon = degreesToRadians(double.parse(userCoordinate[0]));
+
+    double lat2 = degreesToRadians(double.parse(targetCoordinate[1]));
+    double lon2 = degreesToRadians(double.parse(targetCoordinate[0]));
+
+    double dLat = lat2 - userLat;
+    double dLon = lon2 - userLon;
+
+    double a = pow(sin(dLat / 2), 2) + 
+        cos(userLat) * cos(lat2) * pow(sin(dLon / 2), 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    double distance = earthRadius * c * 1000; // Convert to meters 
+    return distance.toInt();
+  }
+  
   Future<void> initializeCamera() async {
     cameras = await availableCameras();
     controller = CameraController(cameras[0], ResolutionPreset.medium);
@@ -260,10 +289,12 @@ class _NavigationPageState extends State<NavigationPage> {
                   ),
                   // Data about user and device
                   Container(
-                    margin: EdgeInsets.only(top: deviceSize(context).height*0.25),
+                    margin: EdgeInsets.only(top: deviceSize(context).height*0.15),
                     color: Colors.white,
                     child: Column(
                       children: [
+                        Text('============================'),
+                        Text("UserDistanceToActiveCoord: $userDistanceToActiveCoord"),
                         Text('============================'),
                         Text("Sub Route: $G_closestSubRouteKeyName", style: const TextStyle(color: Color.fromARGB(255, 180, 0, 141), fontSize: 20)),
                         Text('============================'),
