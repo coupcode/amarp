@@ -143,7 +143,7 @@ class _NavigationPageState extends State<NavigationPage> {
       isLoadingProgressPercentage += 0.25;
     });
     // listen to user position every 5 secs
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       startListening();
     });
   
@@ -192,7 +192,7 @@ class _NavigationPageState extends State<NavigationPage> {
         });
         
         // Check if user is 1 metre or less to the active coordinate (THEN: switch to the next coordinate)
-        if(userAndActiveCoordInterval <= 2){
+        if(userAndActiveCoordInterval >= 5){
           // CASE 1: If G_closestCoordInSubRouteIndex < G_closestSubRouteKeyName Array length
           if(G_closestCoordInSubRouteIndex < G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName].length - 1){
             setState(() {
