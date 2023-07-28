@@ -115,6 +115,14 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
           itemCount: searchOpened ? searchedBuildingList.length : buildingList.length,
           itemBuilder: (((context, index) => InkWell(
             onTap: ()=> Get.to(()=> NavigationPage(
+              destinationName: searchOpened
+              ? searchedBuildingList[index]["name"]
+              : buildingList[index]["name"],
+
+              imagePath: searchOpened
+              ? searchedBuildingList[index]["image"]
+              : buildingList[index]["image"],
+
               routes: searchOpened
               ? searchedBuildingList[index]["routes"]
               : buildingList[index]["routes"]

@@ -1,4 +1,5 @@
 import 'package:amarp/constants.dart';
+import 'package:amarp/screens/success_page.dart';
 import 'package:amarp/utils/directional_arrow.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -11,8 +12,11 @@ import 'package:get/get.dart';
 
 
 class NavigationPage extends StatefulWidget {
-  NavigationPage({Key? key, required this.routes}) : super(key: key);
+  NavigationPage({Key? key, required this.destinationName,required this.imagePath,required this.routes}) : super(key: key);
   List routes;
+  String destinationName;
+  String imagePath;
+
   @override
   _NavigationPageState createState() => _NavigationPageState();
 }
@@ -123,11 +127,13 @@ class _NavigationPageState extends State<NavigationPage> {
     });
   }
 
+  StreamSubscription<CompassEvent>? _compassSubscription;
+
   @override
   void initState() {
     initializeCamera();
     // Listening to compass heading
-    FlutterCompass.events?.listen((event) {
+    _compassSubscription = FlutterCompass.events?.listen((event) {
       setState(() {
         _heading = event.heading ?? 0.0;
       });
@@ -136,8 +142,8 @@ class _NavigationPageState extends State<NavigationPage> {
     setState(() {
       isLoadingProgressPercentage += 0.25;
     });
-    // listen to user position every 10 secs
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    // listen to user position every 5 secs
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       startListening();
     });
   
@@ -147,8 +153,9 @@ class _NavigationPageState extends State<NavigationPage> {
   @override
   void dispose() {
     // Dispose controller
-    controller.dispose();
+    _compassSubscription?.cancel();
     _timer?.cancel();
+    controller.dispose();
     super.dispose();
   }
 
@@ -185,13 +192,18 @@ class _NavigationPageState extends State<NavigationPage> {
       else{
         // CASE 2-1: Check if destination reach (Meaning that is the last coord in the route)
         if(G_closestSubRouteIndexInRoute == G_closestRoute.length-1){
-          Get.snackbar("AT DESTINATION", "Trip should end, because you are at the destination");
+          Get.snackbar("AT DESTINATION", "redirecting...", colorText: Colors.white);
+          Timer(const Duration(seconds: 1), () {
+          Get.off(() => SuccessPage(destinationName: widget.destinationName, imagePath: widget.imagePath));
+          });
         }
         // CASE 2-2: Move to the next G_closestSubRouteKeyName
         else{
+          int newLocalGclosestSubRouteIndexInRoute = G_closestSubRouteIndexInRoute + 1;
           setState(() {
-            G_closestSubRouteIndexInRoute += 1;
-            G_closestSubRouteKeyName = G_closestRoute[G_closestSubRouteIndexInRoute].keys.first;
+            G_closestSubRouteIndexInRoute = newLocalGclosestSubRouteIndexInRoute;
+            G_closestSubRouteKeyName = G_closestRoute[newLocalGclosestSubRouteIndexInRoute].keys.first;
+            G_closestCoordInSubRouteIndex = 0;
           });
         }
       }
@@ -248,14 +260,19 @@ class _NavigationPageState extends State<NavigationPage> {
                   ),
                   // Data about user and device
                   Container(
-                    margin: EdgeInsets.only(top: deviceSize(context).height*0.3),
+                    margin: EdgeInsets.only(top: deviceSize(context).height*0.25),
                     color: Colors.white,
                     child: Column(
                       children: [
-                        Text("Closest SubRoute Dist: ${G_closestRouteDistanceInMeters/1000} metres", style: TextStyle(color: Colors.green, fontSize: 20)),
-                        Text("Closest SubRoute Name: $G_closestSubRouteKeyName", style: TextStyle(color: Colors.blue, fontSize: 20)),
-                        Text("Closest SubRoute CoordIndex: $G_closestCoordInSubRouteIndex", style: TextStyle(color: Colors.red, fontSize: 20)),
-                        Text("Heading : ${_heading}", style: TextStyle(color: Colors.green, fontSize: 20)),
+                        Text('============================'),
+                        Text("Sub Route: $G_closestSubRouteKeyName", style: const TextStyle(color: Color.fromARGB(255, 180, 0, 141), fontSize: 20)),
+                        Text('============================'),
+                        Text("Coord Index: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Color.fromARGB(255, 180, 168, 0), fontSize: 20)),
+                        Text('============================'),
+                        Text("Closest SubRoute Dist: ${G_closestRouteDistanceInMeters/1000} metres", style: const TextStyle(color: Colors.green, fontSize: 20)),
+                        Text("Closest SubRoute Name: $G_closestSubRouteKeyName", style: const TextStyle(color: Colors.blue, fontSize: 20)),
+                        Text("Closest SubRoute CoordIndex: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Colors.red, fontSize: 20)),
+                        Text("Heading : ${_heading}", style: const TextStyle(color: Colors.green, fontSize: 20)),
                       ],
                     ),
                   )
