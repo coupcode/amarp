@@ -36,7 +36,7 @@ class _NavigationPageState extends State<NavigationPage> {
 
   // Selected route Values
   List G_closestRoute = [];
-  double G_closestRouteDistanceInMeters = 0;
+  int G_closestRouteDistanceInMeters = 0;
   int G_closestSubRouteIndexInRoute = 0;
   String G_closestSubRouteKeyName = '';
   int G_closestCoordInSubRouteIndex = 0;
@@ -46,13 +46,9 @@ class _NavigationPageState extends State<NavigationPage> {
     return degrees * (pi / 180.0);
   }
   void selectRouteForUser(List<String> userCoordinate){
-    const double earthRadius = 6371.0; // Earth's radius in kilometers
-    double userLat = degreesToRadians(double.parse(userCoordinate[1]));
-    double userLon = degreesToRadians(double.parse(userCoordinate[0]));
-    
     // Looping through possible routes to find the closest one to user
     List closestRoute = widget.routes[0];
-    double closestRouteDistanceInMeters = 0;
+    int closestRouteDistanceInMeters = 0;
     int closestSubRouteIndexInRoute = 0;
     String closestSubRouteKeyName = '';
     int closestCoordInSubRouteIndex = 0;
@@ -66,18 +62,11 @@ class _NavigationPageState extends State<NavigationPage> {
           Map subRoute = route[subRouteIndex];
           String subRouteKeyName = subRoute.keys.first;
           for (int coordIndex=0; coordIndex < subRoute[subRouteKeyName].length; coordIndex++){
-              double lat2 = degreesToRadians(double.parse(subRoute[subRouteKeyName][coordIndex][1]));
-              double lon2 = degreesToRadians(double.parse(subRoute[subRouteKeyName][coordIndex][0]));
-
-              double dLat = lat2 - userLat;
-              double dLon = lon2 - userLon;
-
-              double a = pow(sin(dLat / 2), 2) + 
-                  cos(userLat) * cos(lat2) * pow(sin(dLon / 2), 2);
-              double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-
-              double distance = earthRadius * c * 1000; // Convert to meters
-
+              
+              int distance = userDistanceAndTargetCoordinatesInMeters(
+                userCoordinate, 
+                subRoute[subRouteKeyName]
+              );
               if (index1 ==0 && subRouteIndex == 0 && coordIndex == 0){
                 closestRouteDistanceInMeters = distance;
                 closestRoute = widget.routes[index1];
@@ -108,9 +97,9 @@ class _NavigationPageState extends State<NavigationPage> {
                     else{
                       isLoadingProgressPercentage += (progressInterval/2);
                     }
-                    
                 });
               }
+          
           }
         }
     }
