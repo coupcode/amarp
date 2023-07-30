@@ -43,7 +43,7 @@ class _NavigationPageState extends State<NavigationPage> {
 
   // Calculate and choose route for user
   double degreesToRadians(double degrees) {
-    return degrees * (pi / 180.0);
+    return degrees * pi / 180.0;
   }
   void selectRouteForUser(List<String> userCoordinate){
     // Looping through possible routes to find the closest one to user
@@ -62,29 +62,24 @@ class _NavigationPageState extends State<NavigationPage> {
           Map subRoute = route[subRouteIndex];
           String subRouteKeyName = subRoute.keys.first;
           for (int coordIndex=0; coordIndex < subRoute[subRouteKeyName].length; coordIndex++){
-              
               int distance = userDistanceAndTargetCoordinatesInMeters(
                 userCoordinate, 
-                subRoute[subRouteKeyName]
+                subRoute[subRouteKeyName][coordIndex]// lon, lat
               );
               if (index1 ==0 && subRouteIndex == 0 && coordIndex == 0){
-                closestRouteDistanceInMeters = distance;
-                closestRoute = widget.routes[index1];
-                closestSubRouteIndexInRoute = subRouteIndex;
-                closestSubRouteKeyName = subRouteKeyName;
-                closestCoordInSubRouteIndex=coordIndex;
-                // update start progress indicator
-
-                setState(() {
-                  isLoadingProgressPercentage += progressInterval/2; 
-                });
+                  closestRouteDistanceInMeters = distance;
+                  closestRoute = widget.routes[index1];
+                  closestSubRouteIndexInRoute = subRouteIndex;
+                  closestSubRouteKeyName = subRouteKeyName;
+                  closestCoordInSubRouteIndex=coordIndex;
+                  isLoadingProgressPercentage += progressInterval/2;
               }
               if (distance < closestRouteDistanceInMeters){
-                closestRouteDistanceInMeters = distance;
-                closestRoute = widget.routes[index1];
-                closestSubRouteIndexInRoute = subRouteIndex;
-                closestSubRouteKeyName = subRouteKeyName;
-                closestCoordInSubRouteIndex=coordIndex;
+                  closestRouteDistanceInMeters = distance;
+                  closestRoute = widget.routes[index1];
+                  closestSubRouteIndexInRoute = subRouteIndex;
+                  closestSubRouteKeyName = subRouteKeyName;
+                  closestCoordInSubRouteIndex=coordIndex;
               }
 
               // update last progress indicator
@@ -110,7 +105,6 @@ class _NavigationPageState extends State<NavigationPage> {
       G_closestSubRouteIndexInRoute = closestSubRouteIndexInRoute;
       G_closestSubRouteKeyName = closestSubRouteKeyName;
       G_closestCoordInSubRouteIndex = closestCoordInSubRouteIndex;
-
       isLoading=false;
       routeSelected=true;
     });
@@ -157,6 +151,10 @@ class _NavigationPageState extends State<NavigationPage> {
       _userLocation = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation,
       );
+      // Update the UI with the new bearing angle
+      setState(() {
+          _userLocation = _userLocation;
+      });
       // ON START: Selecting starting route based on user location
       if(!routeSelected){
         selectRouteForUser([_userLocation!.longitude.toString(), _userLocation!.latitude.toString()]);
@@ -171,8 +169,8 @@ class _NavigationPageState extends State<NavigationPage> {
         int userAndActiveCoordInterval = userDistanceAndTargetCoordinatesInMeters(
           [_userLocation!.longitude.toString(), _userLocation!.latitude.toString()],
           [
-            G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][1], // lon
-            G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][0] // lat
+            G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][0], // lon
+            G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][1] // lat
           ]
         );
         // TODO: Remove, just for analytical evidence
@@ -209,30 +207,97 @@ class _NavigationPageState extends State<NavigationPage> {
           }
         }
       }
-
-      // Update the UI with the new bearing angle
-      setState(() {
-          _userLocation = _userLocation;
-      });
   }
 
-  int userDistanceAndTargetCoordinatesInMeters(List<String> userCoordinate, List<String> targetCoordinate){
-    const double earthRadius = 6371.0; // Earth's radius in kilometers
-    double userLat = degreesToRadians(double.parse(userCoordinate[1]));
-    double userLon = degreesToRadians(double.parse(userCoordinate[0]));
+  int userDistanceAndTargetCoordinatesInMeters(
+    List<String> userCoordinate, List<String> targetCoordinate) {
+  const double earthEquatorialRadius = 6378137.0; // Earth's equatorial radius in meters
+  const double earthPolarRadius = 6356752.3; // Earth's polar radius in meters
 
-    double lat2 = degreesToRadians(double.parse(targetCoordinate[1]));
-    double lon2 = degreesToRadians(double.parse(targetCoordinate[0]));
+  double userLat = degreesToRadians(double.parse(userCoordinate[1]));
+  double userLon = degreesToRadians(double.parse(userCoordinate[0]));
 
-    double dLat = lat2 - userLat;
-    double dLon = lon2 - userLon;
+  double targetLat = degreesToRadians(double.parse(targetCoordinate[1]));
+  double targetLon = degreesToRadians(double.parse(targetCoordinate[0]));
 
-    double a = pow(sin(dLat / 2), 2) + 
-        cos(userLat) * cos(lat2) * pow(sin(dLon / 2), 2);
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    double distance = earthRadius * c * 1000; // Convert to meters 
-    return distance.toInt();
-  }
+  double a = earthEquatorialRadius;
+  double b = earthPolarRadius;
+  double f = 1 / 298.257223563; // Earth's flattening
+
+  double L = targetLon - userLon;
+
+  double tanU1 = (1 - f) * tan(userLat);
+  double cosU1 = 1 / sqrt(1 + tanU1 * tanU1);
+  double sinU1 = tanU1 * cosU1;
+
+  double tanU2 = (1 - f) * tan(targetLat);
+  double cosU2 = 1 / sqrt(1 + tanU2 * tanU2);
+  double sinU2 = tanU2 * cosU2;
+
+  double sinLambda;
+  double cosLambda;
+  double sinSigma;
+  double cosSigma;
+  double sigma;
+  double sinAlpha;
+  double cosSqAlpha;
+  double cos2SigmaM;
+  double C;
+
+  double lambda = L;
+  double prevLambda;
+
+  int iterLimit = 100;
+
+  do {
+    sinLambda = sin(lambda);
+    cosLambda = cos(lambda);
+    sinSigma = sqrt((cosU2 * sinLambda) * (cosU2 * sinLambda) +
+        (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda) *
+            (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda));
+    if (sinSigma == 0) {
+      return 0; // coincident points
+    }
+    cosSigma = sinU1 * sinU2 + cosU1 * cosU2 * cosLambda;
+    sigma = atan2(sinSigma, cosSigma);
+    sinAlpha = cosU1 * cosU2 * sinLambda / sinSigma;
+    cosSqAlpha = 1 - sinAlpha * sinAlpha;
+    cos2SigmaM = cosSigma - 2 * sinU1 * sinU2 / cosSqAlpha;
+
+    if (cos2SigmaM.isNaN) {
+      cos2SigmaM = 0; // equatorial line: cosSqAlpha=0 (§6)
+    }
+
+    C = f / 16 * cosSqAlpha * (4 + f * (4 - 3 * cosSqAlpha));
+
+    prevLambda = lambda;
+    lambda = L +
+        (1 - C) *
+            f *
+            sinAlpha *
+            (sigma +
+                C *
+                    sinSigma *
+                    (cos2SigmaM +
+                        C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)));
+    iterLimit--;
+    if (iterLimit == 0) {
+      return double.infinity.toInt(); // formula failed to converge
+    }
+  } while ((lambda - prevLambda).abs() > 1e-12 && iterLimit > 0);
+
+  double uSq = cosSqAlpha * (a * a - b * b) / (b * b);
+  double A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
+  double B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)));
+  double deltaSigma =
+      B * sinSigma * (cos2SigmaM + B / 4 * (cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM) -
+          B / 6 * cos2SigmaM * (-3 + 4 * sinSigma * sinSigma) *
+              (-3 + 4 * cos2SigmaM * cos2SigmaM)));
+
+  double distance = b * A * (sigma - deltaSigma);
+
+  return distance.toInt();
+}
   
   Future<void> initializeCamera() async {
     cameras = await availableCameras();
