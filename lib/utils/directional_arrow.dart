@@ -48,16 +48,15 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
     // Convert the bearing angle to degrees
     double degrees = bearing * 180.0 / pi;
 
-    // if (degrees >= -135 && degrees < -45) {
-    //   return Direction.South;
-    // } else if (degrees >= -45 && degrees < 45) {
-    //   return Direction.West;
-    // } else if (degrees >= 45 && degrees < 135) {
-    //   return Direction.North;
-    // } else {
-    //   return Direction.East;
-    // }
-    return Direction.West;
+    if (degrees >= -135 && degrees < -45) {
+      return Direction.South;
+    } else if (degrees >= -45 && degrees < 45) {
+      return Direction.West;
+    } else if (degrees >= 45 && degrees < 135) {
+      return Direction.North;
+    } else {
+      return Direction.East;
+    }
   }
 
   String userInfo = "";
