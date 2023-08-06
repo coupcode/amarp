@@ -48,16 +48,19 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
     // Convert the bearing angle to degrees
     double degrees = bearing * 180.0 / pi;
 
-    if (degrees >= -135 && degrees < -45) {
-      return Direction.South;
-    } else if (degrees >= -45 && degrees < 45) {
-      return Direction.West;
-    } else if (degrees >= 45 && degrees < 135) {
-      return Direction.North;
-    } else {
-      return Direction.East;
-    }
+    // if (degrees >= -135 && degrees < -45) {
+    //   return Direction.South;
+    // } else if (degrees >= -45 && degrees < 45) {
+    //   return Direction.West;
+    // } else if (degrees >= 45 && degrees < 135) {
+    //   return Direction.North;
+    // } else {
+    //   return Direction.East;
+    // }
+    return Direction.West;
   }
+
+  String userInfo = "";
 
   @override
   Widget build(BuildContext context) {
@@ -66,124 +69,221 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
       
       Direction direction = getRelativeDirection(widget.user_lat, widget.user_lon, widget.next_latitude, widget.next_longitude);
       switch (direction) {
+        // ==================================
+        // NOTE: Case tested and confirmed on emulator
         case Direction.North:
-          print("Destination is to the North.");
-          break;
+          setState(() {
+            userInfo = "Destination is to the North.";
+          });
+          if(widget.heading >= -30 && widget.heading <= 30){
+            return Image.asset(
+              arrowsMap["straight"],
+              width: 200
+            );
+          }
+          // MOVING CLOCKWISE
+          else if(widget.heading >30 && widget.heading <=90){
+            return Image.asset(
+              arrowsMap["semi-left"],
+              width: 200
+            );
+          }
+          else if(widget.heading >90 && widget.heading <=150){
+            return Image.asset(
+              arrowsMap["sharp-left"],
+              width: 200
+            );
+          }
+
+
+          // MOVING ANTI-CLOCKWISE
+          else if(widget.heading >=-90 && widget.heading <-30){
+            return Image.asset(
+              arrowsMap["semi-right"],
+              width: 200
+            );
+          }
+          
+          else if(widget.heading >= -150 && widget.heading <-90){
+            return Image.asset(
+              arrowsMap["sharp-right"],
+              width: 200
+            );
+          }
+
+          else{
+            return Image.asset(
+              arrowsMap["back"],
+              width: 200
+            );
+          }
+        // ==================================
+          
+        // ==================================
+        // NOTE: Case tested and confirmed on emulator
         case Direction.South:
-          print("Destination is to the South.");
-          break;
+          setState(() {
+            userInfo = "Destination is to the South.";
+          });
+
+          if(widget.heading >= -30 && widget.heading <= 30){
+            return Image.asset(
+              arrowsMap["back"],
+              width: 200
+            );
+          }
+          // MOVING CLOCKWISE
+          else if(widget.heading >30 && widget.heading <=90){
+            return Image.asset(
+              arrowsMap["sharp-right"],
+              width: 200
+            );
+          }
+          else if(widget.heading >90 && widget.heading <=150){
+            return Image.asset(
+              arrowsMap["semi-right"],
+              width: 200
+            );
+          }
+
+
+          // MOVING ANTI-CLOCKWISE
+          else if(widget.heading >=-90 && widget.heading <-30){
+            return Image.asset(
+              arrowsMap["sharp-left"],
+              width: 200
+            );
+          }
+          
+          else if(widget.heading >= -150 && widget.heading <-90){
+            return Image.asset(
+              arrowsMap["semi-left"],
+              width: 200
+            );
+          }
+
+          else{
+            return Image.asset(
+              arrowsMap["straight"],
+              width: 200
+            );
+          }
+
+        // ===========================================
+        // NOTE: Case tested and confirmed on emulator (TODO: refactor if logics to look like the WEST code)
         case Direction.East:
-          print("Destination is to the East.");
-          break;
+          setState(() {
+            userInfo = "Destination is to the East.";
+          });
+          // STRAIGHT
+          if(widget.heading>60 && widget.heading <=120){
+            return Image.asset(
+              arrowsMap["straight"],
+              width: 200
+            );
+          }
+
+          // 
+          else if(widget.heading >= -30 && widget.heading <= 30){
+            return Image.asset(
+              arrowsMap["sharp-right"],
+              width: 200
+            );
+          }
+          // MOVING CLOCKWISE
+          else if(widget.heading >30 && widget.heading <=60){
+            return Image.asset(
+              arrowsMap["semi-right"],
+              width: 200
+            );
+          }
+          
+          else if(widget.heading >120 && widget.heading <=150){
+            return Image.asset(
+              arrowsMap["semi-left"],
+              width: 200
+            );
+          }
+
+
+          // MOVING ANTI-CLOCKWISE
+          else if(widget.heading >=-90 && widget.heading <-30){
+            return Image.asset(
+              arrowsMap["back"],
+              width: 200
+            );
+          }
+          
+          else if(widget.heading >= -150 && widget.heading <-90){
+            return Image.asset(
+              arrowsMap["back"],
+              width: 200
+            );
+          }
+
+          else{
+            return Image.asset(
+              arrowsMap["sharp-left"],
+              width: 200
+            );
+          }
+
+        // ================================================
+        // NOTE: Case tested and confirmed on emulator
         case Direction.West:
-          print("Destination is to the West.");
-          break;
+          setState(() {
+            userInfo = "Destination is to the West.";
+          });
+          // STRAIGHT
+          if(widget.heading >= -120 && widget.heading <= -60){
+            return Image.asset(
+              arrowsMap["straight"],
+              width: 200
+            );
+          }
+          // MOVING CLOCKWISE
+          else if(widget.heading > -60 && widget.heading <= -30){
+            return Image.asset(
+              arrowsMap["semi-left"],
+              width: 200
+            );
+          }
+          else if(widget.heading > -30 && widget.heading <= 30){
+            return Image.asset(
+              arrowsMap["sharp-left"],
+              width: 200
+            );
+          }
+          // MOVING ANTI-CLOCKWISE
+          else if(widget.heading >= -150 && widget.heading < -120){
+            return Image.asset(
+              arrowsMap["semi-right"],
+              width: 200
+            );
+          }
+          else if((widget.heading > 150 && widget.heading <= 179) || (widget.heading >= -179 && widget.heading < -150)){
+            return Image.asset(
+              arrowsMap["sharp-right"],
+              width: 200
+            );
+          }
+
+          else{
+            return Image.asset(
+              arrowsMap["back"],
+              width: 200
+            );
+          }
+        // ================================================
       }
-
-      // String location = "N";
-      // print('Next coord position : $location');
-      /* =================================== 
-      Handling if next coordinate is NORTH
-      =====================================*/
-      // if(location == 'N' || location == 'NW' || location == 'NE'){
-      //   print('CAME NORTH');
-      //   if(widget.heading >= coordInterval[location][0] && widget.heading <= coordInterval[location][1]){
-      //     return Image.asset(
-      //         arrowsMap["straight"],
-      //         width: 200
-      //     );
-      //   }
-      //   // Location on 45deg Left
-      //   else if(widget.heading >= coordInterval[location][1] && widget.heading <= coordInterval[location][1]+45){
-      //     return Image.asset(
-      //       arrowsMap["semi-left"],
-      //       width: 200,
-      //     );
-      //   }
-      //   // Location on 45 deg right
-      //   else if(widget.heading >= coordInterval[location][0]-45 && widget.heading <= coordInterval[location][0]){
-      //     return Image.asset(
-      //       arrowsMap["semi-right"],
-      //       width: 200,
-      //     );
-      //   }
-      //   // Location on sharp left
-      //   else if(widget.heading >= coordInterval[location][1]+45 && widget.heading <= coordInterval[location][1]+135){
-      //     return Image.asset(
-      //       arrowsMap["sharp-left"],
-      //       width: 200,
-      //     );
-      //   }
-      //   // Location on sharp right
-      //   else if(widget.heading >= coordInterval[location][0]-135 && widget.heading <= coordInterval[location][0]-45){
-      //     return Image.asset(
-      //       arrowsMap["sharp-right"],
-      //       width: 200,
-      //     );
-      //   }
-
-      //   else{
-      //     return Image.asset(
-      //       arrowsMap["back"],
-      //       width: 200,
-      //     );
-      //   }
-      // }
-      /* =====================================
-      Handling if next coordinate is SOUTH
-      =======================================*/
-      // else{
-      //   // Location == Heading
-      //   if((widget.heading >= coordInterval[location][0] && widget.heading <= -coordInterval[location][1]) 
-      //   || (widget.heading >= coordInterval[location][1] && widget.heading <= coordInterval[location][1]+45)){
-      //       return Image.asset(
-      //         arrowsMap["straight"],
-      //         width: 200
-      //     );
-      //   }
-      //   // Location on 45deg Left
-      //   else if(widget.heading >= coordInterval[location][1]+45 && widget.heading <= coordInterval[location][1]+135){
-      //     return Image.asset(
-      //       arrowsMap["semi-left"],
-      //       width: 200,
-      //     );
-      //   }
-      //   // Location on 45 deg right
-      //   else if(widget.heading >= coordInterval[location][0]-45 && widget.heading <= coordInterval[location][0]){
-      //     return Image.asset(
-      //       arrowsMap["semi-right"],
-      //       width: 200,
-      //     );
-      //   }
-      //   // Location on sharp left
-      //   else if(widget.heading >= coordInterval[location][1]+135 && widget.heading <= coordInterval[location][1]+180){
-      //     return Image.asset(
-      //       arrowsMap["sharp-left"],
-      //       width: 200,
-      //     );
-      //   }
-      //   // Location on sharp right
-      //   else if(widget.heading >= coordInterval[location][0]-135 && widget.heading <= coordInterval[location][0]-45){
-      //     return Image.asset(
-      //       arrowsMap["sharp-right"],
-      //       width: 200,
-      //     );
-      //   }
-
-      //   else{
-      //     return Image.asset(
-      //       arrowsMap["back"],
-      //       width: 200,
-      //     );
-      //   }
-      // }
-    return Image.asset(
-            arrowsMap["back"],
-            width: 200,
-          );
     }
         
     // Return widget
-    return activeArrow();
+    return Column(
+      children: [
+        activeArrow(),
+        Text(userInfo, style: const TextStyle(color: Color.fromARGB(255, 121, 13, 6), fontWeight: FontWeight.w800, fontSize: 30))
+      ],
+    );
   }
 }
