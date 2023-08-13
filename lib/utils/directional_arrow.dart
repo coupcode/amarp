@@ -58,21 +58,21 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
     double degrees = bearing * 180.0 / pi;
 
     if(degrees >= 67.5 && degrees < 112.5){
-      return Direction.N;
-    } else if(degrees >= 112.5 && degrees < 157.5){
-      return Direction.NE;
-    } else if(degrees >= -157.5 && degrees < -112.5){
-      return Direction.SE;
-    } else if(degrees >= -112.5 && degrees < -67.5){
-      return Direction.S;
-    } else if(degrees >= -67.5 && degrees < -22.5){
-      return Direction.SW;
-    } else if(degrees >= -22.5 && degrees < 22.5){
-      return Direction.W;
-    } else if(degrees >= 22.2 && degrees < 67.5){
-      return Direction.NW;
-    } else{
       return Direction.E;
+    } else if(degrees >= 112.5 && degrees < 157.5){
+      return Direction.SE;
+    } else if(degrees >= -157.5 && degrees < -112.5){
+      return Direction.SW;
+    } else if(degrees >= -112.5 && degrees < -67.5){
+      return Direction.W;
+    } else if(degrees >= -67.5 && degrees < -22.5){
+      return Direction.NW;
+    } else if(degrees >= -22.5 && degrees < 22.5){
+      return Direction.N;
+    } else if(degrees >= 22.2 && degrees < 67.5){
+      return Direction.NE;
+    } else{
+      return Direction.S;
     }
   
   }
@@ -85,13 +85,13 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
     Widget activeArrow(){
       
       Direction direction = getRelativeDirection(widget.user_lat, widget.user_lon, widget.next_latitude, widget.next_longitude);
-      switch (Direction.N) {
+      switch (direction) {
         /* ====================================================
-          NORTH
+          EAST
         ================================================== */
-        case Direction.N:
+        case Direction.E:
           setState(() {
-            userInfo = "Destination is to the N";
+            userInfo = "Destination is to the E";
           });
           if(widget.heading >= 67.5 && widget.heading < 112.5){
             return Image.asset(
@@ -131,11 +131,11 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
         
         /* ====================================================
-          NORTH EAST
+          SOUTH EAST
         ================================================== */
-        case Direction.NE:
+        case Direction.SE:
           setState(() {
-            userInfo = "Destination is to the NE";
+            userInfo = "Destination is to the SE";
           });
           if(widget.heading >= 112.5 && widget.heading < 157.5){
             return Image.asset(
@@ -175,11 +175,11 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
 
         /* ====================================================
-          SOUTH EAST
+          SOUTH WEST
         ================================================== */
-        case Direction.SE:
+        case Direction.SW:
           setState(() {
-            userInfo = "Destination is to the SE";
+            userInfo = "Destination is to the SW";
           });
           if(widget.heading >= -157.5 && widget.heading < -112.5){
             return Image.asset(
@@ -219,11 +219,11 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
 
          /* ====================================================
-          SOUTH
+          WEST
         ================================================== */
-        case Direction.S:
+        case Direction.W:
           setState(() {
-            userInfo = "Destination is to the S";
+            userInfo = "Destination is to the W";
           });
           if(widget.heading >= -112.5 && widget.heading < -67.5){
             return Image.asset(
@@ -263,11 +263,11 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
 
         /* ====================================================
-          SOUTH WEST
+          NORTH WEST
         ================================================== */
-        case Direction.SW:
+        case Direction.NW:
           setState(() {
-            userInfo = "Destination is to the SW";
+            userInfo = "Destination is to the NW";
           });
           if(widget.heading >= -67.5 && widget.heading < -22.5){
             return Image.asset(
@@ -307,11 +307,11 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
 
         /* ====================================================
-         WEST
+         NORTH
         ================================================== */
-        case Direction.W:
+        case Direction.N:
           setState(() {
-            userInfo = "Destination is to the W";
+            userInfo = "Destination is to the N";
           });
           if(widget.heading >= -22.5 && widget.heading < 22.5){
             return Image.asset(
@@ -351,11 +351,11 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
 
         /* ====================================================
-         NORTH WEST
+         NORTH EAST
         ================================================== */
-        case Direction.NW:
+        case Direction.NE:
           setState(() {
-            userInfo = "Destination is to the NW";
+            userInfo = "Destination is to the NE";
           });
           if(widget.heading >= 22.2 && widget.heading < 67.5){
             return Image.asset(
@@ -395,11 +395,11 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
 
         /* ====================================================
-         EAST
+         SOUTH
         ================================================== */
-        case Direction.E:
+        case Direction.S:
           setState(() {
-            userInfo = "Destination is to the E";
+            userInfo = "Destination is to the S";
           });
           if(widget.heading >= -157.5 && widget.heading < -112.5){
             return Image.asset(
