@@ -18,7 +18,7 @@ class BuildingsScreen extends StatefulWidget {
 class _BuildingsScreenState extends State<BuildingsScreen> {
   AppController appController = Get.put(AppController());
   List buildingList = [{
-    'id': 2, 
+    'id': 1, 
     'created_at': '2023-03-25T18:21:16.069436Z', 
     'updated_at': '2023-03-25T17:43:15.316014Z', 
     'name': "UENR Auditorium",

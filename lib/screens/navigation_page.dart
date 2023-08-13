@@ -248,13 +248,14 @@ class _NavigationPageState extends State<NavigationPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: Colors.black,
       body: 
        isLoading
        ? Column(
          mainAxisAlignment: MainAxisAlignment.center,
         //  crossAxisAlignment: CrossAxisAlignment.center,
          children:  [
-          const Text("Calculating route..."),
+          const Text("Calculating route...", style: AppWhiteTextStyle.texth3,),
           AppPadding.verticalPadding,
            Padding(
              padding: const EdgeInsets.symmetric(horizontal: AppPadding.screenPaddingXXL),
@@ -262,71 +263,72 @@ class _NavigationPageState extends State<NavigationPage> {
            ),
          ],
        )
-       : Stack(
-            children:[
-               SizedBox(
-                height: deviceSize(context).height * 1,
-                child: CameraPreview(controller),
-              ),
-              // Current directional arrows
-              Column(
-                children: [
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: DirectionalArrow(
-                      heading: _heading,
-                      user_lat: _userLocation!.latitude,
-                      user_lon: _userLocation!.longitude,
-                      next_latitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][0]),
-                      next_longitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][1]),
-                    )
+       : Column(
+          children: [
+            // SCREEN 0
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              width: deviceSize(context).width,
+              height: deviceSize(context).height * 0.07,
+              child: Text('Destination: ${widget.destinationName}', style: AppWhiteTextStyle.texth3),
+            ),
+            // SCREEN 1
+            SizedBox(
+              height: deviceSize(context).height * 0.7,
+              width: deviceSize(context).width,
+              child: Stack(
+                children:[
+                  SizedBox(
+                    height: deviceSize(context).height,
+                    width: deviceSize(context).width,
+                    child: CameraPreview(controller),
                   ),
-                  // Data about user and device
-                  Container(
-                    margin: EdgeInsets.only(top: deviceSize(context).height*0.1 ),
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        Text('============================'),
-                        Text("UserDistanceToActiveCoord: $userDistanceToActiveCoord"),
-                        Text('============================'),
-                        Text("Sub Route: $G_closestSubRouteKeyName", style: const TextStyle(color: Color.fromARGB(255, 180, 0, 141), fontSize: 16)),
-                        Text('============================'),
-                        Text("Coord Index: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Color.fromARGB(255, 180, 168, 0), fontSize: 16)),
-                        Text('============================'),
-                        Text("USER LAT : ${_userLocation!.latitude}"),
-                        Text("USER LON : ${_userLocation!.longitude}"),
-                        Text('============================'),
-                        Text(isLoadingProgressPercentage.toString()),
-                        Text("Closest SubRoute Dist: ${G_closestRouteDistanceInMeters} metres", style: const TextStyle(color: Colors.green, fontSize: 16)),
-                        Text("Closest SubRoute Name: $G_closestSubRouteKeyName", style: const TextStyle(color: Colors.blue, fontSize: 16)),
-                        Text("Closest SubRoute CoordIndex: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Colors.red, fontSize: 16)),
-                        Text("Heading : ${_heading}", style: const TextStyle(color: Colors.green, fontSize: 16)),
-                      ],
-                    ),
+                  // Current directional arrows
+                  Column(
+                    children: [
+                      AppPadding.verticalPaddingExtra,
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: DirectionalArrow(
+                          heading: _heading,
+                          user_lat: _userLocation!.latitude,
+                          user_lon: _userLocation!.longitude,
+                          next_latitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][0]),
+                          next_longitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][1]),
+                        )
+                      ),
+                    ],
                   )
-                ],
+                ]
+                      ),
+            ) ,
+            // SCREEN 2
+            SizedBox(
+              height: deviceSize(context).height * 0.2,
+              width: deviceSize(context).width,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Text('============================', style: AppWhiteTextStyle.textp),
+                    Text("UserDistanceToActiveCoord: $userDistanceToActiveCoord", style: AppWhiteTextStyle.texth5),
+                    Text('============================', style: AppWhiteTextStyle.textp),
+                    Text("Sub Route: $G_closestSubRouteKeyName", style: const TextStyle(color: Color.fromARGB(255, 125, 7, 99), fontSize: 16)),
+                    Text('============================', style: AppWhiteTextStyle.textp),
+                    Text("Coord Index: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Color.fromARGB(255, 180, 168, 0), fontSize: 16)),
+                    Text('============================', style: AppWhiteTextStyle.textp),
+                    Text("USER LAT : ${_userLocation!.latitude}", style: AppWhiteTextStyle.textp),
+                    Text("USER LON : ${_userLocation!.longitude}", style: AppWhiteTextStyle.textp),
+                    Text('============================', style: AppWhiteTextStyle.textp),
+                    Text("Closest SubRoute Dist: ${G_closestRouteDistanceInMeters} metres", style: const TextStyle(color: Colors.green, fontSize: 16)),
+                    Text("Heading : ${_heading}", style: const TextStyle(color: Colors.green, fontSize: 16)),
+                  ],
+                ),
               ),
-              // Old arrow pointers below
-              // Padding(
-              //   padding: EdgeInsets.only(
-              //     top: deviceSize(context).height * 0.4,
-              //     left: deviceSize(context).width *0.1
-              //   ),
-              //   child: RotatedWidget(
-              //     // ignore: sort_child_properties_last
-              //     child: Row(
-              //       children:  [
-              //        for(int i=0; i<3; i++)
-              //         const Icon(Icons.arrow_back_ios_new_outlined, size: 100, color: Colors.blue),
-                     
-              //     ],
-              //   ), angle: 160),
-              // )
-              //  ends here
-              
-            ]
-        ) 
+            )
+          ],
+       ) 
+       
+       
           
     );
   }
