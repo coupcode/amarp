@@ -7,7 +7,6 @@ import 'package:flutter_compass/flutter_compass.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math';
 import 'dart:async';
-
 import 'package:get/get.dart';
 
 
@@ -127,8 +126,8 @@ class _NavigationPageState extends State<NavigationPage> {
     setState(() {
       isLoadingProgressPercentage += 0.25;
     });
-    // listen to user position every 5 secs
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    // listen to user position every 1 secs
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       startListening();
     });
   
@@ -145,18 +144,22 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 
    void startListening() async {
-      // update progress
+    if(!routeSelected){
+        // update progress
+        setState(() {
+          isLoadingProgressPercentage += 0.25;
+        });
+      }
+
+      for(int i = 0; i <= 6; i++){
+        _userLocation = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best,
+        );
+      }
       setState(() {
-        isLoadingProgressPercentage += 0.25;
+        _userLocation = _userLocation;
       });
-      // Get the user's current location
-      _userLocation = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.bestForNavigation,
-      );
-      // Update the UI with the new bearing angle
-      setState(() {
-          _userLocation = _userLocation;
-      });
+
       // ON START: Selecting starting route based on user location
       if(!routeSelected){
         selectRouteForUser([_userLocation!.latitude.toString(), _userLocation!.longitude.toString()]);
@@ -180,8 +183,8 @@ class _NavigationPageState extends State<NavigationPage> {
             userDistanceToActiveCoord = userAndActiveCoordInterval;
         });
         
-        // Check if user is 1 metre or less to the active coordinate (THEN: switch to the next coordinate)
-        if(userAndActiveCoordInterval <= 5){
+        // Check if user is 6 metre or less to the active coordinate (THEN: switch to the next coordinate)
+        if(userAndActiveCoordInterval <= 6){
           // CASE 1: If G_closestCoordInSubRouteIndex < G_closestSubRouteKeyName Array length
           if(G_closestCoordInSubRouteIndex < G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName].length - 1){
             setState(() {
@@ -210,19 +213,29 @@ class _NavigationPageState extends State<NavigationPage> {
         }
       }
   }
-
-  int userDistanceAndTargetCoordinatesInMeters(double lat1, double lon1, double lat2, double lon2) {
-   const double earthRadius = 6371000; // Radius of the Earth in meters
-
-    double dLat = (lat2 - lat1) * pi / 180.0;
-    double dLon = (lon2 - lon1) * pi / 180.0;
-
-    double a = sin(dLat / 2) * sin(dLat / 2) +
-        cos(lat1 * pi / 180.0) * cos(lat2 * pi / 180.0) * sin(dLon / 2) * sin(dLon / 2);
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    double distance = earthRadius * c; 
-    return distance.toInt();
+// ===========
+  double coordToRadians(double lat1) {
+  double pi = 3.14159;
+  double radians = lat1 * pi / 180;
+  return radians;
   }
+  int userDistanceAndTargetCoordinatesInMeters(double lat1, double lon1, double lat2, double lon2) {
+    const double r = 6371000; // Earth's radius in meters
+    double lat1Rad = coordToRadians(lat1);
+    double lat2Rad = coordToRadians(lat2);
+    double lon1Rad = coordToRadians(lon1);
+    double lon2Rad = coordToRadians(lon2);
+
+    double dlat = lat2Rad - lat1Rad;
+    double dlon = lon2Rad - lon1Rad;
+
+    double a = pow(sin(dlat / 2), 2) +
+        cos(lat1Rad) * cos(lat2Rad) * pow(sin(dlon / 2), 2);
+    double c = 2 * asin(sqrt(a));
+    double result = c * r; 
+    return result.toInt();
+}
+  // ================
   
   Future<void> initializeCamera() async {
     cameras = await availableCameras();
@@ -270,21 +283,25 @@ class _NavigationPageState extends State<NavigationPage> {
                   ),
                   // Data about user and device
                   Container(
-                    margin: EdgeInsets.only(top: deviceSize(context).height*0.15),
+                    margin: EdgeInsets.only(top: deviceSize(context).height*0.1 ),
                     color: Colors.white,
                     child: Column(
                       children: [
                         Text('============================'),
                         Text("UserDistanceToActiveCoord: $userDistanceToActiveCoord"),
                         Text('============================'),
-                        Text("Sub Route: $G_closestSubRouteKeyName", style: const TextStyle(color: Color.fromARGB(255, 180, 0, 141), fontSize: 20)),
+                        Text("Sub Route: $G_closestSubRouteKeyName", style: const TextStyle(color: Color.fromARGB(255, 180, 0, 141), fontSize: 16)),
                         Text('============================'),
-                        Text("Coord Index: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Color.fromARGB(255, 180, 168, 0), fontSize: 20)),
+                        Text("Coord Index: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Color.fromARGB(255, 180, 168, 0), fontSize: 16)),
                         Text('============================'),
-                        Text("Closest SubRoute Dist: ${G_closestRouteDistanceInMeters/1000} metres", style: const TextStyle(color: Colors.green, fontSize: 20)),
-                        Text("Closest SubRoute Name: $G_closestSubRouteKeyName", style: const TextStyle(color: Colors.blue, fontSize: 20)),
-                        Text("Closest SubRoute CoordIndex: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Colors.red, fontSize: 20)),
-                        Text("Heading : ${_heading}", style: const TextStyle(color: Colors.green, fontSize: 20)),
+                        Text("USER LAT : ${_userLocation!.latitude}"),
+                        Text("USER LON : ${_userLocation!.longitude}"),
+                        Text('============================'),
+                        Text(isLoadingProgressPercentage.toString()),
+                        Text("Closest SubRoute Dist: ${G_closestRouteDistanceInMeters} metres", style: const TextStyle(color: Colors.green, fontSize: 16)),
+                        Text("Closest SubRoute Name: $G_closestSubRouteKeyName", style: const TextStyle(color: Colors.blue, fontSize: 16)),
+                        Text("Closest SubRoute CoordIndex: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Colors.red, fontSize: 16)),
+                        Text("Heading : ${_heading}", style: const TextStyle(color: Colors.green, fontSize: 16)),
                       ],
                     ),
                   )
