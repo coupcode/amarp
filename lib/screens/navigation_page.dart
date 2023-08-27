@@ -1,13 +1,14 @@
 import 'package:amarp/constants.dart';
 import 'package:amarp/screens/success_page.dart';
 import 'package:amarp/utils/directional_arrow.dart';
+import 'package:amarp/utils/location.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_compass/flutter_compass.dart';
-import 'package:geolocator/geolocator.dart';
 import 'dart:math';
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:location/location.dart';
 
 
 class NavigationPage extends StatefulWidget {
@@ -30,8 +31,12 @@ class _NavigationPageState extends State<NavigationPage> {
   bool routeSelected = false;
   List selectedRoute = [];
   
-  Position? _userLocation;
+  
   double? _targetBearing;
+
+  Location location = Location();
+  late LocationData currentLocationData;
+  // LocationData? _userLocation;
 
   // Selected route Values
   List G_closestRoute = [];
@@ -113,8 +118,30 @@ class _NavigationPageState extends State<NavigationPage> {
 
   StreamSubscription<CompassEvent>? _compassSubscription;
   int userDistanceToActiveCoord = 0;
+
+  void locationListener()async{
+    var isAllowed = await requestLocationPerm();
+    if (isAllowed == true){
+      location.changeSettings(
+        accuracy: LocationAccuracy.high,
+        interval: 1000,
+        distanceFilter: 0.5
+      );
+      location.onLocationChanged.listen((LocationData currentLocation) {
+        setState(() {
+          currentLocationData = currentLocation;
+        });
+        startListening(currentLocation);
+
+    });
+    }
+    else{
+      print('NOW ALLOWED');
+    }
+  }
+
   @override
-  void initState() {
+  void initState(){
     initializeCamera();
     // Listening to compass heading
     _compassSubscription = FlutterCompass.events?.listen((event) {
@@ -126,10 +153,8 @@ class _NavigationPageState extends State<NavigationPage> {
     setState(() {
       isLoadingProgressPercentage += 0.25;
     });
-    // listen to user position every 1 secs
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      startListening();
-    });
+    
+    locationListener();
   
     super.initState();
   }
@@ -143,7 +168,9 @@ class _NavigationPageState extends State<NavigationPage> {
     super.dispose();
   }
 
-   void startListening() async {
+   void startListening(LocationData _userLocation) async {
+    print('startlistener function called...');
+
     if(!routeSelected){
         // update progress
         setState(() {
@@ -151,18 +178,9 @@ class _NavigationPageState extends State<NavigationPage> {
         });
       }
 
-      for(int i = 0; i <= 6; i++){
-        _userLocation = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best,
-        );
-      }
-      setState(() {
-        _userLocation = _userLocation;
-      });
-
       // ON START: Selecting starting route based on user location
       if(!routeSelected){
-        selectRouteForUser([_userLocation!.latitude.toString(), _userLocation!.longitude.toString()]);
+        selectRouteForUser([_userLocation.latitude.toString(), _userLocation.longitude.toString()]);
       }
       // ON MOVE AFTER START: Progressing to the next routes (directing user)
       else{
@@ -172,8 +190,8 @@ class _NavigationPageState extends State<NavigationPage> {
             -- Last coordinate in a route == final destination
         ==============================================================================*/
         int userAndActiveCoordInterval = userDistanceAndTargetCoordinatesInMeters(
-          double.parse(_userLocation!.latitude.toString()), // lat
-          double.parse(_userLocation!.longitude.toString()), // lon
+          double.parse(_userLocation.latitude.toString()), // lat
+          double.parse(_userLocation.longitude.toString()), // lon
           
           double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][0]), // lat
           double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][1]) // lon
@@ -291,8 +309,8 @@ class _NavigationPageState extends State<NavigationPage> {
                         alignment: Alignment.topCenter,
                         child: DirectionalArrow(
                           heading: _heading,
-                          user_lat: _userLocation!.latitude,
-                          user_lon: _userLocation!.longitude,
+                          user_lat: currentLocationData.latitude ?? 0,
+                          user_lon: currentLocationData.longitude ?? 0,
                           next_latitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][0]),
                           next_longitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][1]),
                         )
@@ -310,17 +328,21 @@ class _NavigationPageState extends State<NavigationPage> {
                 child: Column(
                   children: [
                     Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("UserDistanceToActiveCoord: $userDistanceToActiveCoord", style: AppWhiteTextStyle.texth5),
-                    Text('============================', style: AppWhiteTextStyle.textp),
                     Text("Sub Route: $G_closestSubRouteKeyName", style: const TextStyle(color: Color.fromARGB(255, 125, 7, 99), fontSize: 16)),
                     Text('============================', style: AppWhiteTextStyle.textp),
                     Text("Coord Index: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Color.fromARGB(255, 180, 168, 0), fontSize: 16)),
                     Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("USER LAT : ${_userLocation!.latitude}", style: AppWhiteTextStyle.textp),
-                    Text("USER LON : ${_userLocation!.longitude}", style: AppWhiteTextStyle.textp),
+                    Text("NEW: LOCATION PACKAGE", style: AppWhiteTextStyle.texth4),
+                    Text("USER LAT : ${currentLocationData.latitude}", style: AppWhiteTextStyle.texth4),
+                    Text("USER LON : ${currentLocationData.longitude}", style: AppWhiteTextStyle.texth4),
                     Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("Closest SubRoute Dist: ${G_closestRouteDistanceInMeters} metres", style: const TextStyle(color: Colors.green, fontSize: 16)),
+                    Text("Speed: ${currentLocationData.speed} m/s", style: const TextStyle(color: Colors.green, fontSize: 16)),
+                    Text('============================', style: AppWhiteTextStyle.textp),
+                    Text("UserDistanceToActiveCoord: $userDistanceToActiveCoord", style: AppWhiteTextStyle.texth4),
+                    Text('============================', style: AppWhiteTextStyle.textp),
                     Text("Heading : ${_heading}", style: const TextStyle(color: Colors.green, fontSize: 16)),
+                  
+
                   ],
                 ),
               ),

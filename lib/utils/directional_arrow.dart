@@ -13,7 +13,7 @@ enum Direction {
 }
 
 class DirectionalArrow extends StatefulWidget {
-  DirectionalArrow({Key? key, required this.heading, required this.user_lat, required this.user_lon, this.next_latitude=-33.865143, this.next_longitude=151.209900}) : super(key: key);
+  DirectionalArrow({Key? key, required this.heading, required this.user_lat, required this.user_lon, required this.next_latitude, required this.next_longitude}) : super(key: key);
   double heading;
   double user_lat;
   double user_lon;

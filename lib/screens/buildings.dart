@@ -33,6 +33,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
     'back_view_lat': null, 
     'back_view_long': null,
     'routes': [entranceToAuditorium1, entranceToAuditorium2]
+    // 'routes': [hostelTestRoute]
   }];
   
   List searchedBuildingList =[];
