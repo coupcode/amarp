@@ -124,19 +124,19 @@ class _NavigationPageState extends State<NavigationPage> {
     if (isAllowed == true){
       location.changeSettings(
         accuracy: LocationAccuracy.high,
-        interval: 1000,
+        interval: 800, // 1000 is 1 sec
         distanceFilter: 0.5
       );
       location.onLocationChanged.listen((LocationData currentLocation) {
+        startListening(currentLocation);
         setState(() {
           currentLocationData = currentLocation;
         });
-        startListening(currentLocation);
-
-    });
+      });
     }
     else{
-      print('NOW ALLOWED');
+      Get.snackbar("Failed", "Couldn't get user location. Please check in your settings to allow");
+      Get.back();
     }
   }
 
@@ -169,17 +169,11 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 
    void startListening(LocationData _userLocation) async {
-    print('startlistener function called...');
-
-    if(!routeSelected){
-        // update progress
+    // ON START: Selecting starting route based on user location
+      if(!routeSelected){
         setState(() {
           isLoadingProgressPercentage += 0.25;
         });
-      }
-
-      // ON START: Selecting starting route based on user location
-      if(!routeSelected){
         selectRouteForUser([_userLocation.latitude.toString(), _userLocation.longitude.toString()]);
       }
       // ON MOVE AFTER START: Progressing to the next routes (directing user)
@@ -213,7 +207,7 @@ class _NavigationPageState extends State<NavigationPage> {
           else{
             // CASE 2-1: Check if destination reach (Meaning that is the last coord in the route)
             if(G_closestSubRouteIndexInRoute == G_closestRoute.length-1){
-              Get.snackbar("AT DESTINATION", "redirecting...", colorText: Colors.white);
+              Get.snackbar("AT DESTINATION", "redirecting...", colorText: Color.fromARGB(255, 12, 65, 13));
               Timer(const Duration(seconds: 1), () {
               Get.off(() => SuccessPage(destinationName: widget.destinationName, imagePath: widget.imagePath));
               });
@@ -237,6 +231,7 @@ class _NavigationPageState extends State<NavigationPage> {
   double radians = lat1 * pi / 180;
   return radians;
   }
+  
   int userDistanceAndTargetCoordinatesInMeters(double lat1, double lon1, double lat2, double lon2) {
     const double r = 6371000; // Earth's radius in meters
     double lat1Rad = coordToRadians(lat1);
@@ -287,8 +282,8 @@ class _NavigationPageState extends State<NavigationPage> {
             Container(
               margin: const EdgeInsets.only(top: 20),
               width: deviceSize(context).width,
-              height: deviceSize(context).height * 0.07,
-              child: Text('Destination: ${widget.destinationName}', style: AppWhiteTextStyle.texth3),
+              height: deviceSize(context).height * 0.1,
+              child: Center(child: Text('Destination: ${widget.destinationName}', style: AppWhiteTextStyle.texth3)),
             ),
             // SCREEN 1
             SizedBox(
@@ -322,25 +317,24 @@ class _NavigationPageState extends State<NavigationPage> {
             ) ,
             // SCREEN 2
             SizedBox(
-              height: deviceSize(context).height * 0.2,
+              height: deviceSize(context).height * 0.17,
               width: deviceSize(context).width,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Text('============================', style: AppWhiteTextStyle.textp),
+                    const Text('============================', style: AppWhiteTextStyle.textp),
                     Text("Sub Route: $G_closestSubRouteKeyName", style: const TextStyle(color: Color.fromARGB(255, 125, 7, 99), fontSize: 16)),
-                    Text('============================', style: AppWhiteTextStyle.textp),
+                    const Text('============================', style: AppWhiteTextStyle.textp),
                     Text("Coord Index: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Color.fromARGB(255, 180, 168, 0), fontSize: 16)),
-                    Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("NEW: LOCATION PACKAGE", style: AppWhiteTextStyle.texth4),
+                    const Text('============================', style: AppWhiteTextStyle.textp),
                     Text("USER LAT : ${currentLocationData.latitude}", style: AppWhiteTextStyle.texth4),
                     Text("USER LON : ${currentLocationData.longitude}", style: AppWhiteTextStyle.texth4),
-                    Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("Speed: ${currentLocationData.speed} m/s", style: const TextStyle(color: Colors.green, fontSize: 16)),
-                    Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("UserDistanceToActiveCoord: $userDistanceToActiveCoord", style: AppWhiteTextStyle.texth4),
-                    Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("Heading : ${_heading}", style: const TextStyle(color: Colors.green, fontSize: 16)),
+                    const Text('============================', style: AppWhiteTextStyle.textp),
+                    Text("Speed: ${currentLocationData.speed!.toStringAsFixed(2)} m/s", style: const TextStyle(color: Colors.green, fontSize: 16)),
+                    const Text('============================', style: AppWhiteTextStyle.textp),
+                    Text("Checkpoint Distance: $userDistanceToActiveCoord metres", style: AppWhiteTextStyle.texth4),
+                    const Text('============================', style: AppWhiteTextStyle.textp),
+                    Text("Heading : $_heading", style: const TextStyle(color: Colors.green, fontSize: 16)),
                   
 
                   ],

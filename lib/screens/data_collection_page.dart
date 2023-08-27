@@ -1,14 +1,13 @@
-
 import 'dart:async';
-import 'dart:ffi';
-
 import 'package:amarp/api/get_class.dart';
 import 'package:amarp/api/post_class.dart';
 import 'package:amarp/constants.dart';
+import 'package:amarp/utils/location.dart';
 import 'package:amarp/widgets/goback_btn.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:location/location.dart';
+
 
 class DataCollectionPage extends StatefulWidget {
   DataCollectionPage({Key? key, required this.buildingsList}) : super(key: key);
@@ -76,15 +75,10 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
   
   // Location vars
   String? _currentAddress;
-  Position? _currentPosition;
   double _currentHeading = 0.00;
-
-  // Stream user location and heading in degree clockwise to magnetic north
-  StreamSubscription<Position>? positionStream;
 
   @override
   void initState() {
-    startListening();
     super.initState();
   }
   
@@ -115,107 +109,36 @@ class _DataCollectionPageState extends State<DataCollectionPage> {
     roomLon.dispose();
     roomAltitude.dispose();
     roomBuildingID.dispose();
-
-    positionStream?.cancel();
     super.dispose();
   }
 
-  final LocationSettings locationSettings = LocationSettings(
-    accuracy: LocationAccuracy.best,
-   distanceFilter: 10 // chanage in distance in meters before update
-  );
-
-  // Location functions
-void startListening(){
-  positionStream = Geolocator.getPositionStream(
-    locationSettings: locationSettings
-    ).listen((Position position) {
-    if (position == null) {
-      return;
-    }
-    if (position.heading != null) {
-      setState(() {
-        _currentHeading = position.heading;
-      });
-    }
-  });
-}
-
-
-  Future<bool> _handleLocationPermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location services are disabled. Please enable the services')));
-      return false;
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')));
-        return false;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.')));
-      return false;
-    }
-    return true;
-  }
 
   Future<void> _getCurrentPosition() async {
-    final hasPermission = await _handleLocationPermission();
-
-    if (!hasPermission) return;
     setState(() {
       isLoading = true;
-      positionValuesTextControl.text = "";
     });
 
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-      setState(() => _currentPosition = position);
+    var isAllowed = await requestLocationPerm();
+    if (isAllowed == true){
+      location.changeSettings(
+        accuracy: LocationAccuracy.high,
+        interval: 800, // 1000 is 1 sec
+        distanceFilter: 0.5
+      );
+      LocationData _locationData = await location.getLocation();
+       setState(() {
+          // Write to textfield
+          positionValuesTextControl.text = """LAT: ${_locationData.latitude}\nLON: ${_locationData.longitude ?? ""}\nALT: ${_locationData.altitude ?? ""} metres
+          """;
+          isLoading = false;
+        });
+    }else{
+      Get.snackbar("Failed", "Couldn't get user location. Please check in your settings to allow");
       setState(() {
-         // Write to textfield
-        positionValuesTextControl.text = """
-  LAT: ${_currentPosition?.latitude}
-  LON: ${_currentPosition?.longitude ?? ""}
-  ALT: ${_currentPosition?.altitude ?? ""} metres
-  """;
-    isLoading = false;
-      });
-      // _getAddressFromLatLng(_currentPosition!);
-    }).catchError((e) {
-      setState(() {
-        positionValuesTextControl.text = "Error Occured";
         isLoading = false;
       });
-    });
+    }
   }
-
-  Future<void> _getAddressFromLatLng(Position position) async {
-    await placemarkFromCoordinates(
-            _currentPosition!.latitude, _currentPosition!.longitude)
-        .then((List<Placemark> placemarks) {
-      Placemark place = placemarks[0];
-      setState(() {
-        _currentAddress =
-            '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.postalCode}';
-       
-      });
-    }).catchError((e) {
-      debugPrint(e);
-    });
-  }
-
   // =============================
     // Form Widgets
     // =============================
