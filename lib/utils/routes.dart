@@ -1,19 +1,9 @@
 // NB, [lat, lon]
-// Hostel Tests
-List hostelTestRoute = [{
-  "Room_To_Downstairs": [
-    ["7.3578871", "-2.3470162"],
-    ["7.3579326", "-2.3473601"],
-    ["7.3580489", "-2.3473238"],
-    ["7.3579806", "-2.3472434"],
-    ["7.3579635", "-2.3472699"]
-  ]
-}];
 
 // ============================
 // Entrance TO Auditorium
 // =============================
-List entranceToAuditorium1 = [{
+List entranceToAuditorium1_old = [{
   "Entrance_To_FrontView_of_Finance": [
     ["7.3492024", "-2.3438317"], 
     ["7.3492367", "-2.3436886"], 
@@ -39,7 +29,7 @@ List entranceToAuditorium1 = [{
         ["7.349326", "-2.3427711"]]
   }];
 
-List entranceToAuditorium2 = [
+List entranceToAuditorium2_old = [
   {
     "Entrance_To_FrontView_of_Finance": [
     ["7.3492024", "-2.3438317"], 

@@ -444,7 +444,8 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
     return Column(
       children: [
         activeArrow(),
-        Text(userInfo, style: const TextStyle(color: Color.fromARGB(255, 18, 150, 8), fontWeight: FontWeight.w800, fontSize: 30))
+        // Position logger
+        // Text(userInfo, style: const TextStyle(color: Color.fromARGB(255, 18, 150, 8), fontWeight: FontWeight.w800, fontSize: 30))
       ],
     );
   }

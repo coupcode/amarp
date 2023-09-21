@@ -3,6 +3,7 @@ import 'package:amarp/constants.dart';
 import 'package:amarp/controller/controller.dart';
 import 'package:amarp/screens/navigation_page.dart';
 import 'package:amarp/screens/data_collection_page.dart';
+import 'package:amarp/utils/new_routes.dart';
 import 'package:amarp/utils/routes.dart';
 import 'package:amarp/widgets/custom_floatingbtn.dart';
 import 'package:flutter/material.dart';
@@ -17,24 +18,85 @@ class BuildingsScreen extends StatefulWidget {
 
 class _BuildingsScreenState extends State<BuildingsScreen> {
   AppController appController = Get.put(AppController());
-  List buildingList = [{
-    'id': 1, 
-    'created_at': '2023-03-25T18:21:16.069436Z', 
-    'updated_at': '2023-03-25T17:43:15.316014Z', 
-    'name': "UENR Auditorium",
-    'description': 'Test Auditorium, description: This is a test description about the test auditorium. Lorem tests hahaha',
-    'image': 'assets/images/uenr-logo.jpeg',
-    'front_view_lat': null, 
-    'front_view_long': null, 
-    'left_view_lat': null, 
-    'left_view_long': null, 
-    'right_view_lat': null, 
-    'right_view_long': null, 
-    'back_view_lat': null, 
-    'back_view_long': null,
-    'routes': [entranceToAuditorium1, entranceToAuditorium2]
-    // 'routes': [hostelTestRoute]
-  }];
+  List buildingList = [
+    {
+      'id': 1, 
+      'created_at': '2023-03-25T18:21:16.069436Z', 
+      'updated_at': '2023-03-25T17:43:15.316014Z', 
+      'name': "Auditorium",
+      'description': '',
+      'image': 'assets/images/uenr-logo.jpeg',
+      'front_view_lat': null, 
+      'front_view_long': null,
+      'routes': [entranceToAuditorium1, entranceToAuditorium2, getFundEntranceToAuditorium]
+    },
+    {
+      'id': 2, 
+      'created_at': '2023-03-25T18:21:16.069436Z', 
+      'updated_at': '2023-03-25T17:43:15.316014Z', 
+      'name': "Main Lecture Block",
+      'description': '',
+      'image': 'assets/images/uenr-logo.jpeg',
+      'front_view_lat': null, 
+      'front_view_long': null,
+      'routes': [getFundEntranceToMainLect, getFundPoliceToMainLect, entranceToMainLect]
+    },
+    {
+      'id': 3, 
+      'created_at': '2023-03-25T18:21:16.069436Z', 
+      'updated_at': '2023-03-25T17:43:15.316014Z', 
+      'name': "SH",
+      'description': '',
+      'image': 'assets/images/uenr-logo.jpeg',
+      'front_view_lat': null, 
+      'front_view_long': null,
+      'routes': [entranceToSH, zinkoEntranceToSH]
+    },
+    {
+      'id': 4, 
+      'created_at': '2023-03-25T18:21:16.069436Z', 
+      'updated_at': '2023-03-25T17:43:15.316014Z', 
+      'name': "Administration",
+      'description': '',
+      'image': 'assets/images/uenr-logo.jpeg',
+      'front_view_lat': null, 
+      'front_view_long': null,
+      'routes': [entranceToAdministration, getFundEntranceToAdministration]
+    },
+    {
+      'id': 5, 
+      'created_at': '2023-03-25T18:21:16.069436Z', 
+      'updated_at': '2023-03-25T17:43:15.316014Z', 
+      'name': "Clinic",
+      'description': '',
+      'image': 'assets/images/uenr-logo.jpeg',
+      'front_view_lat': null, 
+      'front_view_long': null,
+      'routes': [entranceToClinic, getFundEntranceToClinic, entranceToClinicByCar]
+    },
+    {
+      'id': 6, 
+      'created_at': '2023-03-25T18:21:16.069436Z', 
+      'updated_at': '2023-03-25T17:43:15.316014Z', 
+      'name': "Examination Office",
+      'description': '',
+      'image': 'assets/images/uenr-logo.jpeg',
+      'front_view_lat': null, 
+      'front_view_long': null,
+      'routes': [entranceToExamsOffice, getFundEntranceToExamsOffice]
+    },
+    {
+      'id': 7, 
+      'created_at': '2023-03-25T18:21:16.069436Z', 
+      'updated_at': '2023-03-25T17:43:15.316014Z', 
+      'name': "Finance Directorate",
+      'description': '',
+      'image': 'assets/images/uenr-logo.jpeg',
+      'front_view_lat': null, 
+      'front_view_long': null,
+      'routes': [entranceToFinanceDirectorate]
+    }
+  ];
   
   List searchedBuildingList =[];
   bool isLoading = false;
