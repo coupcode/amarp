@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:text_to_speech/text_to_speech.dart';
+
 
 const baseUrl = "http://amarp.pythonanywhere.com/api/v1";
+// Text to speech
+TextToSpeech tts = TextToSpeech();
+void saySomethingToUser(String text){
+  tts.setVolume(1.0);
+  tts.speak(text);
+}
+
 // Global methods
 deviceSize(context) {
   return MediaQuery.of(context).size;

@@ -1,3 +1,4 @@
+import 'package:amarp/constants.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -33,6 +34,7 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
     "sharp-left":"assets/icons/sharp-left.png",
     "sharp-right":"assets/icons/sharp-right.png"
   };
+  bool tts_for_back = false;
 
   // 
   double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -94,36 +96,45 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
             userInfo = "Destination is to the E";
           });
           if(widget.heading >= 67.5 && widget.heading < 112.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["straight"],
               width: 200
             );
           }
           else if(widget.heading >= 22.5 && widget.heading < 67.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
             );
           }
           else if(widget.heading >= -67.5 && widget.heading < 22.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
             );
           }
           else if(widget.heading >= 112.5 && widget.heading < 157.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
             );
           }
           else if(widget.heading >= -112.5 && widget.heading < -67.5){
+            if (tts_for_back == false){
+              saySomethingToUser("Please, Turn back");
+              tts_for_back = true;
+            }
             return Image.asset(
               arrowsMap["back"],
               width: 200
             );
           }
           else{
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
@@ -138,36 +149,45 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
             userInfo = "Destination is to the SE";
           });
           if(widget.heading >= 112.5 && widget.heading < 157.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["straight"],
               width: 200
             );
           }
           else if(widget.heading >= 67.5 && widget.heading < 112.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
             );
           }
           else if(widget.heading >= -22.5 && widget.heading < 67.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
             );
           }
           else if (widget.heading >= -67.5 && widget.heading < -22.5){
+            if (tts_for_back == false){
+              saySomethingToUser("Please, Turn back");
+              tts_for_back = true;
+            }
             return Image.asset(
               arrowsMap["back"],
               width: 200
             );
           }
           else if(widget.heading >= -157.5 && widget.heading < -67.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
             );
           }
           else{
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
@@ -182,36 +202,45 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
             userInfo = "Destination is to the SW";
           });
           if(widget.heading >= -157.5 && widget.heading < -112.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["straight"],
               width: 200
             );
           }
           else if(widget.heading >= -112.5 && widget.heading < -67.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
             );
           }
           else if(widget.heading >= -67.5 && widget.heading < 22.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
             );
           }
           else if(widget.heading >= 22.5 && widget.heading < 67.5){
+            if (tts_for_back == false){
+              saySomethingToUser("Please, Turn back");
+              tts_for_back = true;
+            }
             return Image.asset(
               arrowsMap["back"],
               width: 200
             );
           }
           else if(widget.heading >= 67.5 && widget.heading < 157.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
             );
           }
           else{
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
@@ -226,36 +255,45 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
             userInfo = "Destination is to the W";
           });
           if(widget.heading >= -112.5 && widget.heading < -67.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["straight"],
               width: 200
             );
           }
           else if(widget.heading >= -67.5 && widget.heading < -22.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
             );
           }
           else if(widget.heading >= -22.5 && widget.heading < 67.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
             );
           }
           else if(widget.heading >= 67.5 && widget.heading < 112.5){
+            if (tts_for_back == false){
+              saySomethingToUser("Please, Turn back");
+              tts_for_back = true;
+            }
             return Image.asset(
               arrowsMap["back"],
               width: 200
             );
           }
           else if(widget.heading >= -157.5 && widget.heading < -112.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
             );
           }
           else{
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
@@ -270,36 +308,45 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
             userInfo = "Destination is to the NW";
           });
           if(widget.heading >= -67.5 && widget.heading < -22.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["straight"],
               width: 200
             );
           }
           else if(widget.heading >= -22.5 && widget.heading < 22.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
             );
           }
           else if(widget.heading >= 22.5 && widget.heading < 112.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
             );
           }
           else if(widget.heading >= 112.5 && widget.heading < 157.5){
+            if (tts_for_back == false){
+              saySomethingToUser("Please, Turn back");
+              tts_for_back = true;
+            }
             return Image.asset(
               arrowsMap["back"],
               width: 200
             );
           }
           else if(widget.heading >= -112.5 && widget.heading < -67.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
             );
           }
           else{
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
@@ -314,36 +361,45 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
             userInfo = "Destination is to the N";
           });
           if(widget.heading >= -22.5 && widget.heading < 22.5){
+            tts_for_back =false;
             return Image.asset(
               arrowsMap["straight"],
               width: 200
             );
           }
           else if(widget.heading >= 22.5 && widget.heading < 67.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
             );
           }
           else if (widget.heading >= 67.5 && widget.heading < 157.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
             );
           }
           else if (widget.heading >= -67.5 && widget.heading < -22.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
             );
           }
           else if (widget.heading >= -157.5 && widget.heading < -67.5){
+            tts_for_back = false; 
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
             );
           }
           else{
+            if (tts_for_back == false){
+              saySomethingToUser("Please, Turn back");
+              tts_for_back = true;
+            }
             return Image.asset(
               arrowsMap["back"],
               width: 200
@@ -358,36 +414,45 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
             userInfo = "Destination is to the NE";
           });
           if(widget.heading >= 22.2 && widget.heading < 67.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["straight"],
               width: 200
             );
           }
           else if (widget.heading >= 67.5 && widget.heading < 112.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
             );
           }
           else if (widget.heading >= -22.5 && widget.heading < 22.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
             );
           }
           else if (widget.heading >= -112.5 && widget.heading < -22.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
             );
           }
           else if(widget.heading >= -157.5 && widget.heading < -112.5){
+            if (tts_for_back == false){
+              saySomethingToUser("Please, Turn back");
+              tts_for_back = true;
+            }
             return Image.asset(
               arrowsMap["back"],
               width: 200
             );
           }
           else{
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
@@ -402,36 +467,45 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
             userInfo = "Destination is to the S";
           });
           if(widget.heading >= -157.5 && widget.heading < -112.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
             );
           }
           else if(widget.heading >= -112.5 && widget.heading < -22.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
             );
           }
           else if(widget.heading >= 112.5 && widget.heading < 157.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
             );
           }
           else if(widget.heading >= 22.5 && widget.heading < 112.5){
+            tts_for_back = false;
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
             );
           }
           else if(widget.heading >= -22.5 && widget.heading < 22.5){
+            if (tts_for_back == false){
+              saySomethingToUser("Please, Turn back");
+              tts_for_back = true;
+            }
             return Image.asset(
               arrowsMap["back"],
               width: 200
             );
           }
           else{
+            tts_for_back = false;
             return Image.asset(
                 arrowsMap["straight"],
                 width: 200

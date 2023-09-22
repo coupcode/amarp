@@ -9,7 +9,7 @@ import 'dart:math';
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:location/location.dart';
-
+import 'package:text_to_speech/text_to_speech.dart';
 
 class NavigationPage extends StatefulWidget {
   NavigationPage({Key? key, required this.destinationName,required this.imagePath,required this.routes}) : super(key: key);
@@ -150,9 +150,12 @@ class _NavigationPageState extends State<NavigationPage> {
       });
     });
     // update progress
-    setState(() {
-      isLoadingProgressPercentage += 0.25;
-    });
+    if (routeSelected == false){
+      setState(() {
+        isLoadingProgressPercentage += 0.25;
+      });
+    }
+    
     
     locationListener();
   
@@ -196,7 +199,7 @@ class _NavigationPageState extends State<NavigationPage> {
         });
         
         // Check if user is 6 metre or less to the active coordinate (THEN: switch to the next coordinate)
-        if(userAndActiveCoordInterval <= 6){
+        if(userAndActiveCoordInterval <= 10){
           // CASE 1: If G_closestCoordInSubRouteIndex < G_closestSubRouteKeyName Array length
           if(G_closestCoordInSubRouteIndex < G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName].length - 1){
             setState(() {
@@ -208,9 +211,12 @@ class _NavigationPageState extends State<NavigationPage> {
             // CASE 2-1: Check if destination reach (Meaning that is the last coord in the route)
             if(G_closestSubRouteIndexInRoute == G_closestRoute.length-1){
               Get.snackbar("AT DESTINATION", "redirecting...", colorText: Color.fromARGB(255, 12, 65, 13));
-              Timer(const Duration(seconds: 1), () {
-              Get.off(() => SuccessPage(destinationName: widget.destinationName, imagePath: widget.imagePath));
-              });
+              saySomethingToUser("You have reached your destination");
+              Timer(
+                const Duration(seconds: 1), () {
+                    Get.off(() => SuccessPage(destinationName: widget.destinationName, imagePath: widget.imagePath));
+                }
+              );
             }
             // CASE 2-2: Move to the next G_closestSubRouteKeyName
             else{
@@ -259,7 +265,6 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: 

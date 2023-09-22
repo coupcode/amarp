@@ -1,7 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.amarp">
-    <uses-permission android:name="android.permission.INTERNET"/> <!-- Add this -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+   
+    <queries> 
+        <!-- Custom addition for Text To Speech  -->
+        <intent>  
+            <action android:name="android.intent.action.TTS_SERVICE" />  
+        </intent>  
+    </queries>
+
    <application
         android:label="amarp"
         android:name="${applicationName}"

@@ -19,10 +19,10 @@ class SuccessPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(imagePath),
+            Center(child: Image.asset(imagePath)),
             AppPadding.verticalPaddingExtra,
-            Text('Congratulations'),
-            Text("Trip has ended, because you are at the destination")
+            const Text('Congratulations'),
+            const Text("Trip has ended, because you are at the destination")
           ]
         ),
       )),
