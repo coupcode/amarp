@@ -4,24 +4,24 @@ PODS:
   - Flutter (1.0.0)
   - flutter_compass (0.0.1):
     - Flutter
-  - geocoding (1.0.5):
-    - Flutter
-  - geolocator_apple (1.2.0):
+  - location (0.0.1):
     - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
   - share_plus (0.0.1):
     - Flutter
+  - text_to_speech (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - Flutter (from `Flutter`)
   - flutter_compass (from `.symlinks/plugins/flutter_compass/ios`)
-  - geocoding (from `.symlinks/plugins/geocoding/ios`)
-  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - location (from `.symlinks/plugins/location/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
+  - text_to_speech (from `.symlinks/plugins/text_to_speech/ios`)
 
 EXTERNAL SOURCES:
   camera_avfoundation:
@@ -30,23 +30,23 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_compass:
     :path: ".symlinks/plugins/flutter_compass/ios"
-  geocoding:
-    :path: ".symlinks/plugins/geocoding/ios"
-  geolocator_apple:
-    :path: ".symlinks/plugins/geolocator_apple/ios"
+  location:
+    :path: ".symlinks/plugins/location/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
+  text_to_speech:
+    :path: ".symlinks/plugins/text_to_speech/ios"
 
 SPEC CHECKSUMS:
   camera_avfoundation: 82dc5597033fe2dcdcca6e41f7e464d0855e74ad
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
-  geocoding: 32cfcdb16d38d907caaba65e2e42ad10d38bee58
-  geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
+  location: d5cf8598915965547c3f36761ae9cc4f4e87d22e
   path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
   share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
+  text_to_speech: 8669facdbd5b72d2939b810493defd991634f6f9
 
 PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
 

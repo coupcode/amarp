@@ -9,7 +9,6 @@ import 'dart:math';
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:location/location.dart';
-import 'package:text_to_speech/text_to_speech.dart';
 
 class NavigationPage extends StatefulWidget {
   NavigationPage({Key? key, required this.destinationName,required this.imagePath,required this.routes}) : super(key: key);
@@ -22,6 +21,9 @@ class NavigationPage extends StatefulWidget {
 }
 
 class _NavigationPageState extends State<NavigationPage> {
+  bool safetyPrompt = false;
+  int safetyPromptCount = 0;
+
   Timer? _timer;
   double _heading = 0.0;
   late CameraController controller;
@@ -116,7 +118,6 @@ class _NavigationPageState extends State<NavigationPage> {
     });
   }
 
-  StreamSubscription<CompassEvent>? _compassSubscription;
   int userDistanceToActiveCoord = 0;
 
   void locationListener()async{
@@ -140,15 +141,40 @@ class _NavigationPageState extends State<NavigationPage> {
     }
   }
 
+  void _startListeningToHeading() {
+    FlutterCompass.events?.listen((CompassEvent event) {
+      setState(() {
+        _heading = event.heading ?? 00;
+      });
+    });
+  }
+
+  cautionPrompt(){
+    Timer.periodic(const Duration(seconds: 15), (timer) {
+      safetyPromptCount += 1;
+      setState(() {
+        safetyPrompt = true;
+      });
+      Timer(
+        const Duration(seconds: 5), () {
+            setState(() {
+              safetyPrompt = false;
+            });
+        }
+      );
+
+      if (safetyPromptCount == 2) {
+        timer.cancel();
+      }
+    });
+  }
+
   @override
   void initState(){
     initializeCamera();
     // Listening to compass heading
-    _compassSubscription = FlutterCompass.events?.listen((event) {
-      setState(() {
-        _heading = event.heading ?? 0.0;
-      });
-    });
+   _startListeningToHeading();
+
     // update progress
     if (routeSelected == false){
       setState(() {
@@ -158,14 +184,13 @@ class _NavigationPageState extends State<NavigationPage> {
     
     
     locationListener();
-  
+    cautionPrompt();
     super.initState();
   }
 
   @override
   void dispose() {
     // Dispose controller
-    _compassSubscription?.cancel();
     _timer?.cancel();
     controller.dispose();
     super.dispose();
@@ -256,6 +281,8 @@ class _NavigationPageState extends State<NavigationPage> {
 }
   // ================
   
+  
+
   Future<void> initializeCamera() async {
     cameras = await availableCameras();
     controller = CameraController(cameras[0], ResolutionPreset.medium);
@@ -265,6 +292,7 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: 
@@ -281,76 +309,142 @@ class _NavigationPageState extends State<NavigationPage> {
            ),
          ],
        )
-       : Column(
-          children: [
-            // SCREEN 0
-            Container(
-              margin: const EdgeInsets.only(top: 20),
-              width: deviceSize(context).width,
-              height: deviceSize(context).height * 0.1,
-              child: Center(child: Text('Destination: ${widget.destinationName}', style: AppWhiteTextStyle.texth3)),
-            ),
-            // SCREEN 1
-            SizedBox(
-              height: deviceSize(context).height * 0.7,
-              width: deviceSize(context).width,
-              child: Stack(
-                children:[
-                  SizedBox(
-                    height: deviceSize(context).height,
-                    width: deviceSize(context).width,
-                    child: CameraPreview(controller),
-                  ),
-                  // Current directional arrows
-                  Column(
-                    children: [
-                      AppPadding.verticalPaddingExtra,
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: DirectionalArrow(
-                          heading: _heading,
-                          user_lat: currentLocationData.latitude ?? 0,
-                          user_lon: currentLocationData.longitude ?? 0,
-                          next_latitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][0]),
-                          next_longitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][1]),
-                        )
+       : Stack(
+         children:[ 
+          // STACK 1
+          Column(
+            children: [
+              // SCREEN 1
+              SizedBox(
+                height: deviceSize(context).height * 0.7,
+                width: deviceSize(context).width,
+                child: Stack(
+                  children:[
+                    // STACK 1
+                    SizedBox(
+                      height: deviceSize(context).height,
+                      width: deviceSize(context).width,
+                      child: CameraPreview(controller),
+                    ),
+                    // 
+                    if(_heading > 15.0 && _heading < 18.5)
+                      Positioned(
+                        top: 100,
+                        left: 100,
+                        child: Container(
+                          width: 160,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.red, width: 2),
+                          ),
+                        ),
                       ),
-                    ],
-                  )
-                ]
-                      ),
-            ) ,
-            // SCREEN 2
-            SizedBox(
-              height: deviceSize(context).height * 0.17,
-              width: deviceSize(context).width,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("Sub Route: $G_closestSubRouteKeyName", style: const TextStyle(color: Color.fromARGB(255, 125, 7, 99), fontSize: 16)),
-                    const Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("Coord Index: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Color.fromARGB(255, 180, 168, 0), fontSize: 16)),
-                    const Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("USER LAT : ${currentLocationData.latitude}", style: AppWhiteTextStyle.texth4),
-                    Text("USER LON : ${currentLocationData.longitude}", style: AppWhiteTextStyle.texth4),
-                    const Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("Speed: ${currentLocationData.speed!.toStringAsFixed(2)} m/s", style: const TextStyle(color: Colors.green, fontSize: 16)),
-                    const Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("Checkpoint Distance: $userDistanceToActiveCoord metres", style: AppWhiteTextStyle.texth4),
-                    const Text('============================', style: AppWhiteTextStyle.textp),
-                    Text("Heading : $_heading", style: const TextStyle(color: Colors.green, fontSize: 16)),
-                  
-
-                  ],
-                ),
+                    // STACK 2
+                    // Current directional arrows
+                    Column(
+                      children: [
+                        AppPadding.verticalPaddingExtra,
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: DirectionalArrow(
+                            heading: _heading,
+                            user_lat: currentLocationData.latitude ?? 0,
+                            user_lon: currentLocationData.longitude ?? 0,
+                            next_latitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][0]),
+                            next_longitude: double.parse(G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName][G_closestCoordInSubRouteIndex][1]),
+                          )
+                        ),
+                      ],
+                    )
+                  ]
+                        ),
               ),
-            )
-          ],
-       ) 
-       
-       
+              
+            ],
+          ),
+          // STACK 2
+          DraggableScrollableSheet(
+            initialChildSize: 0.33, // Adjust as needed
+            maxChildSize: 0.6, // Adjust as needed
+            minChildSize: 0.33, // Adjust as needed
+            builder: (context, scrollController) {
+              return Container(
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 27, 26, 26),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(15),topRight: Radius.circular(15))
+                ),
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      margin: const EdgeInsets.only(top: 2, bottom: 10),
+                      padding: const EdgeInsets.symmetric(horizontal:10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: deviceSize(context).width *0.65,
+                                child: Text(widget.destinationName, style: AppWhiteTextStyle.texth1)),
+                              SizedBox(
+                                width: deviceSize(context).width *0.29,
+                                child: Text("${currentLocationData.speed!.toStringAsFixed(2)}m/s", style: const TextStyle(color: Colors.blue, fontSize: 20))),
+                            ],
+                          ),
+                          const Divider(color: Colors.grey),
+                          SizedBox(
+                            height: 250,
+                            width: deviceSize(context).width,
+                            child: Image.asset(widget.imagePath)),
+                          const Divider(color: Colors.grey),
+                          AppPadding.verticalPadding,
+                          Text("Current route: $G_closestSubRouteKeyName", style: AppWhiteTextStyle.texth3),
+                          Text("User latitude : ${currentLocationData.latitude}", style: AppWhiteTextStyle.texth4),
+                          Text("User longitude : ${currentLocationData.longitude}", style: AppWhiteTextStyle.texth4),
+                          AppPadding.verticalPadding,
+                          const Divider(color: Colors.grey),
+                          AppPadding.verticalPadding,
+                          Text("Coord Index: $G_closestCoordInSubRouteIndex", style: const TextStyle(color: Color.fromARGB(255, 180, 168, 0), fontSize: 16)),
+                          Text("Checkpoint Distance: $userDistanceToActiveCoord metres", style: AppWhiteTextStyle.texth4),
+                          Text("Heading : $_heading", style: const TextStyle(color: Colors.green, fontSize: 16)),
+                          AppPadding.verticalPadding,
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+
+          // STACK 3
+          safetyPrompt
+          ? Container(
+            color: Colors.black.withOpacity(0.8),
+            width: deviceSize(context).width,
+            height: deviceSize(context).height,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(Icons.warning_rounded, color: Colors.white, size: 70),
+                Text("Be safe", style: AppWhiteTextStyle.texth1),
+                Text("Pay attention to your environment", style: AppWhiteTextStyle.texth3),
+                Text("while walking", style: AppWhiteTextStyle.texth3)
+              ],
+            ),
+          )
+          : const SizedBox()
+
+         ]
           
+       ),  
+
+      
+      
     );
   }
 
