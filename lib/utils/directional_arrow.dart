@@ -95,7 +95,10 @@ void updateIsArrowStraight(bool value) {
 
     Widget activeArrow(){
       
-      Direction direction = getRelativeDirection(widget.user_lat, widget.user_lon, widget.next_latitude, widget.next_longitude);
+      Direction direction = getRelativeDirection(
+        widget.user_lat, widget.user_lon, 
+        widget.next_latitude, widget.next_longitude
+      );
       switch (direction) {
         /* ====================================================
           EAST
@@ -111,7 +114,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= 22.5 && widget.heading < 67.5){
             tts_for_back = false;
-            updateIsArrowStraight(false);
+            updateIsArrowStraight(true);
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
@@ -127,7 +130,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= 112.5 && widget.heading < 157.5){
             tts_for_back = false;
-            updateIsArrowStraight(false);
+            updateIsArrowStraight(true);
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
@@ -157,11 +160,9 @@ void updateIsArrowStraight(bool value) {
           SOUTH EAST
         ================================================== */
         case Direction.SE:
-          setState(() {
-            userInfo = "Destination is to the SE";
-          });
           if(widget.heading >= 112.5 && widget.heading < 157.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["straight"],
               width: 200
@@ -169,6 +170,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= 67.5 && widget.heading < 112.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
@@ -176,6 +178,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= -22.5 && widget.heading < 67.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
@@ -186,6 +189,7 @@ void updateIsArrowStraight(bool value) {
               saySomethingToUser("Please, Turn back");
               tts_for_back = true;
             }
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["back"],
               width: 200
@@ -193,6 +197,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= -157.5 && widget.heading < -67.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
@@ -200,6 +205,7 @@ void updateIsArrowStraight(bool value) {
           }
           else{
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
@@ -210,11 +216,9 @@ void updateIsArrowStraight(bool value) {
           SOUTH WEST
         ================================================== */
         case Direction.SW:
-          setState(() {
-            userInfo = "Destination is to the SW";
-          });
           if(widget.heading >= -157.5 && widget.heading < -112.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["straight"],
               width: 200
@@ -222,6 +226,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= -112.5 && widget.heading < -67.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
@@ -229,6 +234,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= -67.5 && widget.heading < 22.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
@@ -239,6 +245,7 @@ void updateIsArrowStraight(bool value) {
               saySomethingToUser("Please, Turn back");
               tts_for_back = true;
             }
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["back"],
               width: 200
@@ -246,6 +253,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= 67.5 && widget.heading < 157.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
@@ -253,6 +261,7 @@ void updateIsArrowStraight(bool value) {
           }
           else{
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
@@ -263,11 +272,9 @@ void updateIsArrowStraight(bool value) {
           WEST
         ================================================== */
         case Direction.W:
-          setState(() {
-            userInfo = "Destination is to the W";
-          });
           if(widget.heading >= -112.5 && widget.heading < -67.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["straight"],
               width: 200
@@ -275,6 +282,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= -67.5 && widget.heading < -22.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
@@ -282,6 +290,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= -22.5 && widget.heading < 67.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
@@ -292,6 +301,7 @@ void updateIsArrowStraight(bool value) {
               saySomethingToUser("Please, Turn back");
               tts_for_back = true;
             }
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["back"],
               width: 200
@@ -299,6 +309,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= -157.5 && widget.heading < -112.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
@@ -306,6 +317,7 @@ void updateIsArrowStraight(bool value) {
           }
           else{
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
@@ -316,11 +328,9 @@ void updateIsArrowStraight(bool value) {
           NORTH WEST
         ================================================== */
         case Direction.NW:
-          setState(() {
-            userInfo = "Destination is to the NW";
-          });
           if(widget.heading >= -67.5 && widget.heading < -22.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["straight"],
               width: 200
@@ -328,6 +338,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= -22.5 && widget.heading < 22.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
@@ -335,6 +346,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= 22.5 && widget.heading < 112.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
@@ -345,6 +357,7 @@ void updateIsArrowStraight(bool value) {
               saySomethingToUser("Please, Turn back");
               tts_for_back = true;
             }
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["back"],
               width: 200
@@ -352,6 +365,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= -112.5 && widget.heading < -67.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
@@ -359,6 +373,7 @@ void updateIsArrowStraight(bool value) {
           }
           else{
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
@@ -369,11 +384,9 @@ void updateIsArrowStraight(bool value) {
          NORTH
         ================================================== */
         case Direction.N:
-          setState(() {
-            userInfo = "Destination is to the N";
-          });
           if(widget.heading >= -22.5 && widget.heading < 22.5){
             tts_for_back =false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["straight"],
               width: 200
@@ -381,6 +394,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= 22.5 && widget.heading < 67.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
@@ -388,6 +402,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if (widget.heading >= 67.5 && widget.heading < 157.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
@@ -395,6 +410,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if (widget.heading >= -67.5 && widget.heading < -22.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
@@ -402,6 +418,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if (widget.heading >= -157.5 && widget.heading < -67.5){
             tts_for_back = false; 
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
@@ -412,6 +429,7 @@ void updateIsArrowStraight(bool value) {
               saySomethingToUser("Please, Turn back");
               tts_for_back = true;
             }
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["back"],
               width: 200
@@ -422,11 +440,9 @@ void updateIsArrowStraight(bool value) {
          NORTH EAST
         ================================================== */
         case Direction.NE:
-          setState(() {
-            userInfo = "Destination is to the NE";
-          });
           if(widget.heading >= 22.2 && widget.heading < 67.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["straight"],
               width: 200
@@ -434,6 +450,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if (widget.heading >= 67.5 && widget.heading < 112.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
@@ -441,6 +458,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if (widget.heading >= -22.5 && widget.heading < 22.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
@@ -448,6 +466,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if (widget.heading >= -112.5 && widget.heading < -22.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
@@ -458,6 +477,7 @@ void updateIsArrowStraight(bool value) {
               saySomethingToUser("Please, Turn back");
               tts_for_back = true;
             }
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["back"],
               width: 200
@@ -465,6 +485,7 @@ void updateIsArrowStraight(bool value) {
           }
           else{
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
@@ -475,11 +496,9 @@ void updateIsArrowStraight(bool value) {
          SOUTH
         ================================================== */
         case Direction.S:
-          setState(() {
-            userInfo = "Destination is to the S";
-          });
           if(widget.heading >= -157.5 && widget.heading < -112.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
@@ -487,6 +506,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= -112.5 && widget.heading < -22.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
@@ -494,6 +514,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= 112.5 && widget.heading < 157.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
@@ -501,6 +522,7 @@ void updateIsArrowStraight(bool value) {
           }
           else if(widget.heading >= 22.5 && widget.heading < 112.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
@@ -511,6 +533,7 @@ void updateIsArrowStraight(bool value) {
               saySomethingToUser("Please, Turn back");
               tts_for_back = true;
             }
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["back"],
               width: 200
@@ -518,6 +541,7 @@ void updateIsArrowStraight(bool value) {
           }
           else{
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
                 arrowsMap["straight"],
                 width: 200

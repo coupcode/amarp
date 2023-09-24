@@ -373,6 +373,7 @@ double normalizeHeading(double heading) {
                           left: 0.04130000000035494,
                           top: -0.004099999999951365,
                           child: RouteBanner(
+                            heading: _heading,
                             distanceToNextCoord: userDistanceToActiveCoord,
                             routeName: G_closestSubRouteKeyName, routeIndex: G_closestCoordInSubRouteIndex)
                         )

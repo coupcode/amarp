@@ -2,13 +2,14 @@ import 'package:amarp/constants.dart';
 import 'package:flutter/material.dart';
 
 class RouteBanner extends StatefulWidget {
-  RouteBanner({Key? key, required this.distanceToNextCoord,required this.routeName, required this.routeIndex,this.top=200, this.left=150, this.right=0.0}) : super(key: key);
+  RouteBanner({Key? key, required this.heading, required this.distanceToNextCoord,required this.routeName, required this.routeIndex,this.top=200, this.left=150, this.right=0.0}) : super(key: key);
   final String routeName;
   final int routeIndex;
   final double top;
   final double left;
   final double right;
   final distanceToNextCoord;
+  final heading;
 
   @override
   State<RouteBanner> createState() => _RouteBannerState();
@@ -48,14 +49,16 @@ class _RouteBannerState extends State<RouteBanner> {
       ),
     );
     }
-    // double distanceToCoord = double.parse(widget.distanceToNextCoord.toString());
-    double distanceToCoord = 50;
+    double distanceToCoord = double.parse(widget.distanceToNextCoord.toString());
+    double marginLeftVal = widget.heading > 0 
+      ? (700 - (distanceToCoord*2)) - (widget.heading*5) // positive headings
+      : (600 - (distanceToCoord*2)) + (widget.heading*5); // negative headings ;
     return 
-     distanceToCoord <= 50 && distanceToCoord >=10
+     distanceToCoord <= 60 && distanceToCoord >=20 && marginLeftVal > 0
       ? boardWidget(
           distanceToCoord < 25  ? 18 : 550 / (distanceToCoord), // fontSize
           300 - distanceToCoord, // marginTop
-          530 - (distanceToCoord*7), // marginLeft
+          marginLeftVal, // marginLeft
           90 - distanceToCoord, // cardHeight
           180 - distanceToCoord, // cardWidth
           distanceToCoord >= 40 && distanceToCoord <= 50 ? 2 : 3, // poleWidth
