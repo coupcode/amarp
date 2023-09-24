@@ -95,10 +95,11 @@ void updateIsArrowStraight(bool value) {
 
     Widget activeArrow(){
       
-      Direction direction = getRelativeDirection(
-        widget.user_lat, widget.user_lon, 
-        widget.next_latitude, widget.next_longitude
-      );
+      // Direction direction = getRelativeDirection(
+      //   widget.user_lat, widget.user_lon, 
+      //   widget.next_latitude, widget.next_longitude
+      // );
+      Direction direction = Direction.E;
       switch (direction) {
         /* ====================================================
           EAST

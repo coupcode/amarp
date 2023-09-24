@@ -3,6 +3,7 @@ import 'package:amarp/constants.dart';
 import 'package:amarp/controller/controller.dart';
 import 'package:amarp/screens/navigation_page.dart';
 import 'package:amarp/screens/data_collection_page.dart';
+import 'package:amarp/screens/orientation.dart';
 import 'package:amarp/utils/new_routes.dart';
 import 'package:amarp/utils/routes.dart';
 import 'package:amarp/widgets/custom_floatingbtn.dart';
@@ -177,7 +178,7 @@ class _BuildingsScreenState extends State<BuildingsScreen> {
       return ListView.builder(
           itemCount: searchOpened ? searchedBuildingList.length : buildingList.length,
           itemBuilder: (((context, index) => InkWell(
-            onTap: ()=> Get.to(()=> NavigationPage(
+            onTap: ()=> Get.to(()=> OrientationScreen(
               destinationName: searchOpened
               ? searchedBuildingList[index]["name"]
               : buildingList[index]["name"],
