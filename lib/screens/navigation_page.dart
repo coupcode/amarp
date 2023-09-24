@@ -1,7 +1,9 @@
 import 'package:amarp/constants.dart';
+import 'package:amarp/controller/controller.dart';
 import 'package:amarp/screens/success_page.dart';
 import 'package:amarp/utils/directional_arrow.dart';
 import 'package:amarp/utils/location.dart';
+import 'package:amarp/widgets/route_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_compass/flutter_compass.dart';
@@ -9,6 +11,8 @@ import 'dart:math';
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:location/location.dart';
+import 'dart:io' show Platform;
+
 
 class NavigationPage extends StatefulWidget {
   NavigationPage({Key? key, required this.destinationName,required this.imagePath,required this.routes}) : super(key: key);
@@ -21,6 +25,7 @@ class NavigationPage extends StatefulWidget {
 }
 
 class _NavigationPageState extends State<NavigationPage> {
+  bool arrowIsStraight = false;
   bool safetyPrompt = false;
   int safetyPromptCount = 0;
 
@@ -141,14 +146,49 @@ class _NavigationPageState extends State<NavigationPage> {
     }
   }
 
-  void _startListeningToHeading() {
-    FlutterCompass.events?.listen((CompassEvent event) {
-      setState(() {
-        _heading = event.heading ?? 00;
-      });
-    });
+// HEADING
+double normalizeHeading(double heading) {
+  // If the platform is iOS, apply the conversion
+  if (Platform.isIOS) {
+    // If the heading is in the range of 0 to 180, leave it as is
+    if (heading >= 0 && heading <= 180) {
+      return heading;
+    }
+
+    // If the heading is in the range of 181 to 360, convert it to the -179 to 0 range
+    if (heading > 180 && heading <= 360) {
+      return heading - 360;
+    }
+
+    // If the heading is already in the -179 to 0 range, leave it as is
+    if (heading >= -179 && heading < 0) {
+      return heading;
+    }
+
+    // If the heading is in the range of -360 to -180, convert it to the 0 to -179 range
+    if (heading >= -360 && heading < -179) {
+      return heading + 360;
+    }
+    return 0;
+    }
+    return 0;
   }
 
+  void _startListeningToHeading() {
+    FlutterCompass.events?.listen((CompassEvent event) {
+    setState(() {
+      // Check the platform and apply the conversion if it's iOS
+      if (Platform.isIOS) {
+        _heading = normalizeHeading(event.heading ?? 0);
+      } else {
+        // For other platforms, or if not on iOS, use the heading as is
+        _heading = event.heading ?? 0;
+      }
+    });
+  });
+  }
+
+// CAUTION PROMPT
   cautionPrompt(){
     Timer.periodic(const Duration(seconds: 15), (timer) {
       safetyPromptCount += 1;
@@ -224,7 +264,7 @@ class _NavigationPageState extends State<NavigationPage> {
         });
         
         // Check if user is 6 metre or less to the active coordinate (THEN: switch to the next coordinate)
-        if(userAndActiveCoordInterval <= 10){
+        if(userAndActiveCoordInterval <= 13){
           // CASE 1: If G_closestCoordInSubRouteIndex < G_closestSubRouteKeyName Array length
           if(G_closestCoordInSubRouteIndex < G_closestRoute[G_closestSubRouteIndexInRoute][G_closestSubRouteKeyName].length - 1){
             setState(() {
@@ -289,10 +329,9 @@ class _NavigationPageState extends State<NavigationPage> {
     await controller.initialize();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
+    
     return Scaffold(
       backgroundColor: Colors.black,
       body: 
@@ -316,29 +355,30 @@ class _NavigationPageState extends State<NavigationPage> {
             children: [
               // SCREEN 1
               SizedBox(
-                height: deviceSize(context).height * 0.7,
+                height: deviceSize(context).height,
                 width: deviceSize(context).width,
                 child: Stack(
                   children:[
                     // STACK 1
-                    SizedBox(
-                      height: deviceSize(context).height,
-                      width: deviceSize(context).width,
-                      child: CameraPreview(controller),
-                    ),
-                    // 
-                    if(_heading > 15.0 && _heading < 18.5)
-                      Positioned(
-                        top: 100,
-                        left: 100,
-                        child: Container(
-                          width: 160,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.red, width: 2),
-                          ),
+                    Stack(
+                      children: [
+                        SizedBox(
+                          height: deviceSize(context).height *0.7,
+                          width: deviceSize(context).width,
+                          child: CameraPreview(controller)
                         ),
-                      ),
+                        
+                        Obx(()=> isArrowStraight.value
+                        ? Positioned(
+                          left: 0.04130000000035494,
+                          top: -0.004099999999951365,
+                          child: RouteBanner(
+                            distanceToNextCoord: userDistanceToActiveCoord,
+                            routeName: G_closestSubRouteKeyName, routeIndex: G_closestCoordInSubRouteIndex)
+                        )
+                        : const SizedBox()
+                        )
+                    ]),
                     // STACK 2
                     // Current directional arrows
                     Column(
@@ -424,7 +464,7 @@ class _NavigationPageState extends State<NavigationPage> {
           // STACK 3
           safetyPrompt
           ? Container(
-            color: Colors.black.withOpacity(0.8),
+            color: Colors.black.withOpacity(0.85),
             width: deviceSize(context).width,
             height: deviceSize(context).height,
             child: Column(

@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 
 var isOffline = false.obs;
 var isBuildingLoading = false.obs;
-
+var isArrowStraight = false.obs;
 
 class AppController extends GetxController {  
   List buildingsList = [].obs;
-
+  
   void getBuildingsController() async {
     isBuildingLoading(true);
     buildingsList = await GETClass.getBuildings();

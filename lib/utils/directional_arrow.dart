@@ -1,4 +1,6 @@
 import 'package:amarp/constants.dart';
+import 'package:amarp/controller/controller.dart';
+import 'package:amarp/widgets/route_banner.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -20,12 +22,19 @@ class DirectionalArrow extends StatefulWidget {
   double user_lon;
   double next_latitude;
   double next_longitude;
+  
 
   @override
   State<DirectionalArrow> createState() => _DirectionalArrowState();
 }
 
 class _DirectionalArrowState extends State<DirectionalArrow> {
+  // Inside some event handler or function
+void updateIsArrowStraight(bool value) {
+  isArrowStraight(value); // Update the value using the .value setter
+}
+
+  // ARROWS
   Map arrowsMap = {
     "straight":"assets/icons/sa.png",
     "back":"assets/icons/ba.png",
@@ -92,11 +101,9 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           EAST
         ================================================== */
         case Direction.E:
-          setState(() {
-            userInfo = "Destination is to the E";
-          });
           if(widget.heading >= 67.5 && widget.heading < 112.5){
             tts_for_back = false;
+            updateIsArrowStraight(true);
             return Image.asset(
               arrowsMap["straight"],
               width: 200
@@ -104,6 +111,7 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
           else if(widget.heading >= 22.5 && widget.heading < 67.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-right"],
               width: 200
@@ -111,6 +119,7 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
           else if(widget.heading >= -67.5 && widget.heading < 22.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-right"],
               width: 200
@@ -118,6 +127,7 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
           else if(widget.heading >= 112.5 && widget.heading < 157.5){
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["semi-left"],
               width: 200
@@ -128,6 +138,7 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
               saySomethingToUser("Please, Turn back");
               tts_for_back = true;
             }
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["back"],
               width: 200
@@ -135,6 +146,7 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
           }
           else{
             tts_for_back = false;
+            updateIsArrowStraight(false);
             return Image.asset(
               arrowsMap["sharp-left"],
               width: 200
@@ -524,3 +536,4 @@ class _DirectionalArrowState extends State<DirectionalArrow> {
     );
   }
 }
+
